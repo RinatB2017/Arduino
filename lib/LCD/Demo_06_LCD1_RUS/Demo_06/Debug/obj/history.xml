@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc noversion nomachine -mcpu=cortex-m4 -mthumb -Wall -ffunction-sections -g -O0 -c -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj\Demo_06_LCD1\cmsis_lib -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj\Demo_06_LCD1\cmsis_boot -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj\Demo_06_LCD1\cmsis_lib\include -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj\Demo_06_LCD1 -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj\Demo_06_LCD1\ub_lib -IF:\Data_Temp_Ordner\stm32f4\prj_ub\Demo_Prj\Demo_06_LCD1\cmsis">
+      <target file="stm32f4xx_rcc.o" lastModified="140a6c9fe1c">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_rcc.c" lastModified="13ce91da3ed"/>
+      </target>
+      <target file="system_stm32f4xx.o" lastModified="140a6c9ff78">
+         <source file="..\..\..\cmsis_boot\system_stm32f4xx.c" lastModified="13ce91da3d9"/>
+      </target>
+      <target file="stm32_ub_lcd_st7783.o" lastModified="140a6c9fe7b">
+         <source file="..\..\..\ub_lib\stm32_ub_lcd_st7783.c" lastModified="13deff8ef3a"/>
+      </target>
+      <target file="stm32f4xx_gpio.o" lastModified="140a6c9ff32">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_gpio.c" lastModified="13ce91da3cf"/>
+      </target>
+      <target file="stm32f4xx_fsmc.o" lastModified="140a6c9fede">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_fsmc.c" lastModified="13ce9287cf7"/>
+      </target>
+      <target file="main.o" lastModified="140a6c9fdaa">
+         <source file="..\..\..\main.c" lastModified="13d2bc80346"/>
+      </target>
+      <target file="startup_stm32f4xx.o" lastModified="140a6c9fd67">
+         <source file="..\..\..\cmsis_boot\startup\startup_stm32f4xx.c" lastModified="13ce91da3d9"/>
+      </target>
+   </processor>
+</history>

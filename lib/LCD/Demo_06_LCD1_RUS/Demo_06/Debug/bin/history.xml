@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g -nostartfiles -Map=Demo_06.map -O0 --gc-sections -LC:\CooCox\CoIDE\configuration\ProgramData\Demo_06 -TC:\CooCox\CoIDE\configuration\ProgramData\Demo_06/arm-gcc-link.ld -g">
+      <target file="Demo_06.elf" lastModified="140a6ca0180">
+         <source file="..\obj\startup_stm32f4xx.o" lastModified="140a6c9fd67"/>
+         <source file="..\obj\main.o" lastModified="140a6c9fdaa"/>
+         <source file="..\obj\stm32f4xx_rcc.o" lastModified="140a6c9fe1c"/>
+         <source file="..\obj\stm32_ub_lcd_st7783.o" lastModified="140a6c9fe7b"/>
+         <source file="..\obj\stm32f4xx_fsmc.o" lastModified="140a6c9fede"/>
+         <source file="..\obj\stm32f4xx_gpio.o" lastModified="140a6c9ff32"/>
+         <source file="..\obj\system_stm32f4xx.o" lastModified="140a6c9ff78"/>
+      </target>
+   </processor>
+</history>
