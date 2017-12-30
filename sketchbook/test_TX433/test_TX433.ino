@@ -1,14 +1,16 @@
-int ledPin = 8;
+int tx433_Pin = 9;
+
+int delay_ms = 50;
 
 void setup()
 {
-  pinMode(ledPin, OUTPUT);
+  pinMode(tx433_Pin, OUTPUT);
 }
 
 void loop()
 {
-  digitalWrite(ledPin, HIGH);
-  delay(50);
-  digitalWrite(ledPin, LOW);
-  delay(50);
+  digitalWrite(tx433_Pin, HIGH);
+  delay(delay_ms);
+  digitalWrite(tx433_Pin, LOW);
+  delay(delay_ms);
 }

@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#####################################################################
+# File      :   iteadcompile
+# Desc      :   This is a tool by which user can compile .c/.cpp/.ino conveniently.
+# Author    :   Wu Pengfei
+# Company   :   ITEAD Intelligent Systems Co.,Ltd.(http://imall.iteadstudio.com/)
+# Date      :   2014/3/11
+# History   :   Version     Modified by     Date        What
+#               v1.0        Wu Pengfei      2014/3/11   Create
+#####################################################################
+
+##
+ # (C) Copyright 2014
+ # ITEAD Intelligent Systems Co., Ltd. <http://imall.iteadstudio.com>
+ # Wu Pengfei<pengfei.wu@itead.cc>
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License as
+ # published by the Free Software Foundation; either version 2 of
+ # the License, or (at your option) any later version.
+ #
+ ##
+
+SDKVERSION=2.9.8
+
+SDK_C_COMPILE=gcc
+SDK_CPP_COMPILE=g++
+PYTHON27_LDFLAGS=`python2.7-config --ldflags`
+PYTHON27_INCLUDES=`python2.7-config --includes`
+
+#echo "\$# = " $#
+#echo "\$@ = " $@
+#echo "\$* = " $*
+
+toolname=`basename $0`
+
+if [[ $1 == --version ]] || [[ $1 == -v ]] || (( $# == 0 )) ; then
+	echo "Segnix v${SDKVERSION}"
+	exit 0
+fi
+
+if [ $# -lt 2 ] || [[ $1 == -h ]] || [[ $1 == --help ]] ; then
+        echo "Usage:"
+        echo "  ${toolname} objname source.ino [source2.ino] [...]"
+        echo "  ${toolname} objname source.cpp [source2.cpp] [...]"
+        echo "  ${toolname} objname source.c [source2.c] [...]"
+        echo "Examples for .ino"
+        echo "  ${toolname} hello hello.ino"
+        echo "  ${toolname} led led1.ino led2.ino"
+        echo "  ${toolname} led *.ino"
+        echo "Examples for .cpp"
+        echo "  ${toolname} hello hello.cpp"
+        echo "  ${toolname} led led1.cpp led2.cpp"
+        echo "  ${toolname} led *.cpp"
+        echo "Examples for .c"
+        echo "  ${toolname} hello hello.c"
+        echo "  ${toolname} led led1.c led2.c"
+        echo "  ${toolname} led *.c"
+        echo "NOTES:"
+        echo "  objname cannot cantian \".ino\" or \".c\" or \".cpp\""
+        echo "Version:"
+        echo "  ${toolname} [-v]"
+        echo "  ${toolname} [--version]"
+        exit 1
+fi
+
+
+
+if [[ $2 == *.ino ]] ; then
+	echo "compile by .ino"
+	params=${@/.ino/.cpp}
+	
+	mkdir .tmp
+	for var in $@ ; do
+		if [[ ${var} == *.ino  ]] ; then
+			sourcename=.tmp/${var/.ino/.cpp}
+			echo "#include <itead.h>" > ${sourcename}
+			cat ${var} >> ${sourcename}
+		fi
+	done
+	
+	cd .tmp
+	${SDK_CPP_COMPILE} -o ${params} /usr/lib/iteadboot.o  -liteadc -liteadcpp -lpthread -liteadmodule ${PYTHON27_LDFLAGS} ${PYTHON27_INCLUDES} -I../
+	mv $1 ../
+	cd ../
+	
+	rm -rf .tmp
+
+fi
+
+if [[ $2 == *.cpp ]] ; then
+	echo "compile by .cpp"
+	${SDK_CPP_COMPILE} -o $@  -liteadc -liteadcpp -lpthread -liteadmodule ${PYTHON27_LDFLAGS} ${PYTHON27_INCLUDES}
+fi
+
+if [[ $2 == *.c ]] ; then
+	echo "compile by .c"
+	${SDK_C_COMPILE} -o $@ -liteadc -lpthread
+fi
+
+exit

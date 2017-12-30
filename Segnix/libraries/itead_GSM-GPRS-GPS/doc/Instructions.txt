@@ -1,0 +1,59 @@
+***************************************************
+GSM/GPRS/GPS Shield of Futura/Open-electronics
+
+http://www.open-electronics.org/
+
+http://store.open-electronics.org/index.php?route=common/home
+
+***************************************************
+
+
+
+
+
+***************************************************
+For support use the issues' page on google code:
+
+http://code.google.com/p/__gsm-shield-arduino/issues/
+
+or Arduino Forum
+
+***************************************************
+
+
+
+
+
+***************************************************
+Library created by:
+
+Marco Martines
+
+martines[ dot ]marco[ at ]gmail[ dot ]com
+***************************************************
+
+***************************************************
+This library is transplanted to ITEAD-OS-SDK by :
+
+Wu Pengfei
+
+pengfei.wu@itead.cc
+***************************************************
+
+	
+	
+
+[1]	My shield doesn't work. Why?
+	
+	Check this steps and then ask for support on the issues' page on google
+	code.
+
+	1) 	SIM900 and SIM908 require about 1 A during the hardest tasks.
+		You should have an external power source that can provide about
+		1 A at 8-12 V
+
+	2)	If the SIM90X blinks (1 Hz) for some seconds and then turn off,
+		probably it's a communication's problem. Check the switch/jumpers
+		for Serial communication.
+
+	3)	Check the jumper of communication, power source (battery or externel) and charge.
