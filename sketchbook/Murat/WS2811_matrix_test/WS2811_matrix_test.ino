@@ -146,6 +146,8 @@ void loop(void)
   }
   else if (current_led < (111 + 20)) //горизонт
   {
+    central_line[current_led - 111]  = led_color;
+    central_line[(111 + 40) - current_led] = led_color;
     current_led++;
   }
   else
