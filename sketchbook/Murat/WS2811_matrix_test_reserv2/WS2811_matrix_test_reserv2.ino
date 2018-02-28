@@ -142,6 +142,24 @@ void show_line(void)
   show_leds();
 }
 //---------------------------------------------------------------
+void show_line2(void)
+{
+  switch (current_strip)
+  {
+    case 0:
+      matrix0[current_led] = led_color;
+      matrix5[current_led] = led_color;
+      break;
+
+    case 1:
+      matrix7[current_led] = led_color;
+      matrix1[current_led] = led_color;
+      break;
+
+  }
+  show_leds();
+}
+//---------------------------------------------------------------
 void switch_color(void)
 {
   //debug("current_strip = " + String(current_strip));
@@ -221,6 +239,29 @@ void switch_strip(void)
   }
 }
 //---------------------------------------------------------------
+void switch_strip2(void)
+{
+  if (current_led != 0)
+  {
+    return;
+  }
+
+  //TODO пробуем новое
+  if (current_strip == 0)
+  {
+    current_strip = 1;
+  }
+  else
+  {
+    current_strip = 0;
+  }
+  if (current_strip == 0)
+  {
+    current_led = 0;
+    switch_color();
+  }
+}
+//---------------------------------------------------------------
 void setup()
 {
   Serial.begin(57600);
@@ -230,11 +271,11 @@ void setup()
 void loop(void)
 {
   clear_matrix();
-  switch_strip();
+  switch_strip2();
 
   if (current_led < leds_per_strip[current_strip])
   {
-    show_line();
+    show_line2();
     current_led++;
     //delay(10);
   }

@@ -1,5 +1,14 @@
 //---------------------------------------------------------------
 // тест по-быстрому
+// 0 - 20
+// 1 - 30
+// 2 - 36
+// 3 - 40
+// 4 - 36
+// 5 - 36
+// 6 - 25
+// 7 - 20
+// 8 - 25
 //---------------------------------------------------------------
 #include "FastLED.h"
 //---------------------------------------------------------------
@@ -10,18 +19,6 @@ enum {
   GREEN,
   BLUE
 };
-//---------------------------------------------------------------
-/*
-   0 - 20
-   1 - 30
-   2 - 36
-   3 - 40
-   4 - 36
-   5 - 36
-   6 - 25
-   7 - 20
-   8 - 25
-*/
 //---------------------------------------------------------------
 int leds_per_strip[NUM_STRIPS] = { 20, 30, 36, 40, 36, 30, 25, 20, 25 };
 //---------------------------------------------------------------
@@ -35,11 +32,12 @@ CRGB matrix6[25];
 CRGB matrix7[20];
 CRGB matrix8[25];
 //---------------------------------------------------------------
+const int max_address = leds_per_strip[0] + leds_per_strip[5] + leds_per_strip[8] + leds_per_strip[4] + (leds_per_strip[3]/2);
+//---------------------------------------------------------------
 CLEDController *controllers[NUM_STRIPS];
-uint8_t gBrightness = 12;
+uint8_t gBrightness = 128;
 //---------------------------------------------------------------
 int current_led = 0;    // текущий светодиод
-int current_strip = 0;  // текущая лента светодиодов
 //---------------------------------------------------------------
 CRGB led_color = CRGB::Red;
 int current_color = RED;
@@ -54,14 +52,14 @@ int current_color = RED;
 #define LED_PIN_8 9
 #define LED_PIN_9 10
 //---------------------------------------------------------------
-//void debug(String text)
-//{
-//  Serial.println(text);
-//}
-//---------------------------------------------------------------
-void init_matrix(void)
+void debug(String text)
 {
-  //debug("init_matrix");
+  Serial.println(text);
+}
+//---------------------------------------------------------------
+void init_leds(void)
+{
+  debug("init_leds");
   controllers[0] = &FastLED.addLeds<WS2812, LED_PIN_1, GRB>(matrix0, leds_per_strip[0]);
   controllers[1] = &FastLED.addLeds<WS2812, LED_PIN_2, GRB>(matrix1, leds_per_strip[1]);
   controllers[2] = &FastLED.addLeds<WS2812, LED_PIN_3, GRB>(matrix2, leds_per_strip[2]);
@@ -86,162 +84,149 @@ void show_leds(void)
   controllers[8]->show(matrix8, leds_per_strip[8], gBrightness);
 }
 //---------------------------------------------------------------
-void clear_matrix(void)
+void clear_leds(void)
 {
-  for (int x = 0; x < leds_per_strip[0]; x++) matrix0[x] = 0;
-  for (int x = 0; x < leds_per_strip[1]; x++) matrix1[x] = 0;
-  for (int x = 0; x < leds_per_strip[2]; x++) matrix2[x] = 0;
-  for (int x = 0; x < leds_per_strip[3]; x++) matrix3[x] = 0;
-  for (int x = 0; x < leds_per_strip[4]; x++) matrix4[x] = 0;
-  for (int x = 0; x < leds_per_strip[5]; x++) matrix5[x] = 0;
-  for (int x = 0; x < leds_per_strip[6]; x++) matrix6[x] = 0;
-  for (int x = 0; x < leds_per_strip[7]; x++) matrix7[x] = 0;
-  for (int x = 0; x < leds_per_strip[8]; x++) matrix8[x] = 0;
+  int x = 0;
+  for (x = 0; x < leds_per_strip[0]; x++) matrix0[x] = 0;
+  for (x = 0; x < leds_per_strip[1]; x++) matrix1[x] = 0;
+  for (x = 0; x < leds_per_strip[2]; x++) matrix2[x] = 0;
+  for (x = 0; x < leds_per_strip[3]; x++) matrix3[x] = 0;
+  for (x = 0; x < leds_per_strip[4]; x++) matrix4[x] = 0;
+  for (x = 0; x < leds_per_strip[5]; x++) matrix5[x] = 0;
+  for (x = 0; x < leds_per_strip[6]; x++) matrix6[x] = 0;
+  for (x = 0; x < leds_per_strip[7]; x++) matrix7[x] = 0;
+  for (x = 0; x < leds_per_strip[8]; x++) matrix8[x] = 0;
 }
 //---------------------------------------------------------------
-void show_line(void)
+bool set_left_pixel(unsigned int addr, CRGB color)
 {
-  switch (current_strip)
+  int addr0 = 0;
+  int addr1 = leds_per_strip[0];
+  int addr2 = addr1 + leds_per_strip[5];
+  int addr3 = addr2 + leds_per_strip[8];
+  int addr4 = addr3 + leds_per_strip[4];
+
+  if(addr < addr1)
   {
-    case 0:
-      matrix0[current_led] = led_color;
-      break;
-
-    case 1:
-      matrix1[current_led] = led_color;
-      break;
-
-    case 2:
-      matrix2[current_led] = led_color;
-      break;
-
-    case 3:
-      matrix3[current_led] = led_color;
-      break;
-
-    case 4:
-      matrix4[current_led] = led_color;
-      break;
-
-    case 5:
-      matrix5[current_led] = led_color;
-      break;
-
-    case 6:
-      matrix6[current_led] = led_color;
-      break;
-
-    case 7:
-      matrix7[current_led] = led_color;
-      break;
-
-    case 8:
-      matrix8[current_led] = led_color;
-      break;
+    matrix0[addr] = color;
+    return true;
   }
-  show_leds();
+  if(addr < addr2)
+  {
+    matrix5[addr - addr1] = color;
+    return true;
+  }
+  if(addr < addr3)
+  {
+    matrix8[addr - addr2] = color;
+    return true;
+  }
+  if(addr < addr4)
+  {
+    matrix4[addr - addr3] = color;
+    return true;
+  }
+  if(addr < max_address)
+  {
+    matrix3[addr - addr4] = color;
+    return true;
+  }
+  
+  return false;
+}
+//---------------------------------------------------------------
+bool set_right_pixel(unsigned int addr, CRGB color)
+{
+  int addr0 = 0;
+  int addr1 = leds_per_strip[7];
+  int addr2 = addr1 + leds_per_strip[1];
+  int addr3 = addr2 + leds_per_strip[6];
+  int addr4 = addr3 + leds_per_strip[2];
+
+  if(addr < addr1)
+  {
+    matrix7[addr] = color;
+    return true;
+  }
+  if(addr < addr2)
+  {
+    matrix1[addr - addr1] = color;
+    return true;
+  }
+  if(addr < addr3)
+  {
+    matrix6[addr - addr2] = color;
+    return true;
+  }
+  if(addr < addr4)
+  {
+    matrix2[addr - addr3] = color;
+    return true;
+  }
+  if(addr < max_address)
+  {
+    matrix3[addr - addr4] = color;
+    return true;
+  }
+  
+  return false;
 }
 //---------------------------------------------------------------
 void switch_color(void)
 {
-  //debug("current_strip = " + String(current_strip));
   switch (current_color)
   {
     case RED:
-      //debug("Red");
+      debug("Red");
       led_color = CRGB::Green;
       current_color = GREEN;
       break;
 
     case GREEN:
-      //debug("Green");
+      debug("Green");
       led_color = CRGB::Blue;
       current_color = BLUE;
       break;
 
     case BLUE:
-      //debug("Blue");
+      debug("Blue");
       led_color = CRGB::Red;
       current_color = RED;
       break;
 
     default:
-      //debug("default");
+      debug("default");
       led_color = CRGB::Red;
       current_color = RED;
       break;
-  }
-}
-//---------------------------------------------------------------
-void switch_strip(void)
-{
-  if (current_led != 0)
-  {
-    return;
-  }
-
-  switch (current_strip)
-  {
-    case 0:
-      current_strip = 5;
-      break;
-    case 1:
-      current_strip = 6;
-      break;
-    case 2:
-      current_strip = 3;
-      break;
-    case 3:
-      current_strip = 0;
-      break;
-    case 4:
-      current_strip = 7;
-      break;
-    case 5:
-      current_strip = 8;
-      break;
-    case 6:
-      current_strip = 2;
-      break;
-    case 7:
-      current_strip = 1;
-      break;
-    case 8:
-      current_strip = 4;
-      break;
-
-    default:
-      current_strip = 0;
-      break;
-  }
-  current_led = 0;
-  if (current_strip == 0)
-  {
-    switch_color();
   }
 }
 //---------------------------------------------------------------
 void setup()
 {
   Serial.begin(57600);
-  init_matrix();
+  debug("max_address = " + String(max_address));
+  init_leds();
 }
 //---------------------------------------------------------------
 void loop(void)
 {
-  clear_matrix();
-  switch_strip();
-
-  if (current_led < leds_per_strip[current_strip])
+  clear_leds();
+  set_left_pixel(current_led,  led_color);
+  set_right_pixel(current_led, led_color);
+  show_leds();
+  
+  if (current_led < max_address)
   {
-    show_line();
     current_led++;
-    //delay(10);
   }
   else
   {
     current_led = 0;
+    switch_color();
   }
+
+  delay(10);
 }
 //---------------------------------------------------------------
 
