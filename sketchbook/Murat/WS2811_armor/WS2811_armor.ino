@@ -35,12 +35,14 @@ CRGB matrix8[25];
 const int max_address = leds_per_strip[0] + leds_per_strip[5] + leds_per_strip[8] + leds_per_strip[4] + (leds_per_strip[3]/2);
 //---------------------------------------------------------------
 CLEDController *controllers[NUM_STRIPS];
-uint8_t gBrightness = 128;
+uint8_t gBrightness = 1;
 //---------------------------------------------------------------
 int current_led = 0;    // текущий светодиод
 //---------------------------------------------------------------
 CRGB led_color = CRGB::Red;
 int current_color = RED;
+//---------------------------------------------------------------
+//uint8_t buf[200];
 //---------------------------------------------------------------
 #define LED_PIN_1 2
 #define LED_PIN_2 3
@@ -129,6 +131,7 @@ bool set_left_pixel(unsigned int addr, CRGB color)
   if(addr < max_address)
   {
     matrix3[addr - addr4] = color;
+    matrix3[max_address - addr] = color;
     return true;
   }
   
@@ -166,6 +169,7 @@ bool set_right_pixel(unsigned int addr, CRGB color)
   if(addr < max_address)
   {
     matrix3[addr - addr4] = color;
+    matrix3[max_address - addr] = color;
     return true;
   }
   
@@ -204,8 +208,18 @@ void switch_color(void)
 //---------------------------------------------------------------
 void setup()
 {
+  int addr0 = 0;
+  int addr1 = leds_per_strip[0];
+  int addr2 = addr1 + leds_per_strip[5];
+  int addr3 = addr2 + leds_per_strip[8];
+  int addr4 = addr3 + leds_per_strip[4];
+
   Serial.begin(57600);
-  debug("max_address = " + String(max_address));
+  debug("addr0 = " + String(addr0));
+  debug("addr1 = " + String(addr1));
+  debug("addr2 = " + String(addr2));
+  debug("addr3 = " + String(addr3));
+  debug("addr4 = " + String(addr4));
   init_leds();
 }
 //---------------------------------------------------------------
@@ -226,7 +240,7 @@ void loop(void)
     switch_color();
   }
 
-  delay(10);
+  //delay(10);
 }
 //---------------------------------------------------------------
 
