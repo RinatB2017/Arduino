@@ -24,21 +24,6 @@ int btn_3_pin = 9;
 int value_pin_1 = 0;
 int value_pin_2 = 0;
 int value_pin_3 = 0;
-//--------------------------------------------------------------------------------
-#pragma pack (push, 1)
-
-//union UINT16
-//{
-//  uint16_t value;
-//  struct {
-//    uint8_t a;
-//    uint8_t b;
-//    uint8_t c;
-//    uint8_t d;
-//  } bytes;
-//};
-
-#pragma pack(pop)
 //---------------------------------------------------------------
 void init_gpio()
 {
@@ -68,45 +53,6 @@ bool check_btn_3()
 {
   return (digitalRead(btn_3_pin) == LOW);
 }
-//--------------------------------------------------------------------------------
-void convert_data(uint8_t input, char *output)
-{
-  switch (input)
-  {
-    case 0x00: *output = '0'; break;
-    case 0x01: *output = '1'; break;
-    case 0x02: *output = '2'; break;
-    case 0x03: *output = '3'; break;
-    case 0x04: *output = '4'; break;
-    case 0x05: *output = '5'; break;
-    case 0x06: *output = '6'; break;
-    case 0x07: *output = '7'; break;
-    case 0x08: *output = '8'; break;
-    case 0x09: *output = '9'; break;
-    case 0x0A: *output = 'A'; break;
-    case 0x0B: *output = 'B'; break;
-    case 0x0C: *output = 'C'; break;
-    case 0x0D: *output = 'D'; break;
-    case 0x0E: *output = 'E'; break;
-    case 0x0F: *output = 'F'; break;
-    default: break;
-  }
-}
-//--------------------------------------------------------------------------------
-//void convert_data_to_ascii(uint16_t value,
-//                           uint8_t *a,
-//                           uint8_t *b,
-//                           uint8_t *c,
-//                           uint8_t *d)
-//{
-//  UINT16 data16;
-//  data16.value = value;
-//
-//  convert_data(data16.bytes.a, *a);
-//  convert_data(data16.bytes.b, *b);
-//  convert_data(data16.bytes.c, *c);
-//  convert_data(data16.bytes.d, *d);
-//}
 //---------------------------------------------------------------
 void init_transmitter()
 {
@@ -139,20 +85,6 @@ void send_data(int address, int value)
   int data[2] = {0, 0};
 
   radio.setChannel(address);
-
-  //  char a = 0;
-  //  char b = 0;
-  //  char c = 0;
-  //  char d = 0;
-  //
-  //  convert_data_to_ascii(value,
-  //                        &a,
-  //                        &b,
-  //                        &c,
-  //                        &d);
-
-  //PACKET packet;
-  //packet.data = value;
 
   // отправляем данные
   radio.write(&value, sizeof(value));

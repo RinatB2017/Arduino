@@ -32,24 +32,6 @@ union U_BYTE
   } bites;
 };
 
-//typedef struct PACKET
-//{
-//  uint8_t marker_begin;
-//  uint8_t data[4];
-//  uint8_t marker_end;
-//} packet_t;
-//
-//union UINT16
-//{
-//  uint16_t value;
-//  struct {
-//    uint8_t a;
-//    uint8_t b;
-//    uint8_t c;
-//    uint8_t d;
-//  } bytes;
-//};
-
 #pragma pack(pop)
 //---------------------------------------------------------------
 void init_gpio()
