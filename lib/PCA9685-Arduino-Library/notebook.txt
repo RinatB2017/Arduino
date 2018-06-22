@@ -1,2 +1,0 @@
-http://arduino-project.net/nodemcu-v3-arduino-ide/
-https://github.com/kasperskaarhoj/PCA9685-Arduino-Library
