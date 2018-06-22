@@ -40,6 +40,7 @@ void init_gpio()
   pinMode(address_pin_1,  INPUT_PULLUP);
 
   pinMode(pin_output, OUTPUT);
+  analogWrite(pin_output, 255);
 }
 //---------------------------------------------------------------
 int get_address()
