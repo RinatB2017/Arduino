@@ -17,9 +17,9 @@ int analog_pin_2 = A1;
 int analog_pin_3 = A2;
 
 //пины кнопок
-int btn_1_pin = 7;
-int btn_2_pin = 8;
-int btn_3_pin = 9;
+int btn_1_pin = 6;
+int btn_2_pin = 7;
+int btn_3_pin = 8;
 //---------------------------------------------------------------
 int value_pin_1 = 0;
 int value_pin_2 = 0;

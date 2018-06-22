@@ -8,8 +8,8 @@
 RF24 radio(9, 10);
 //---------------------------------------------------------------
 //адресные пины
-int address_pin_0 = 7;
-int address_pin_1 = 8;
+int address_pin_0 = 6;
+int address_pin_1 = 7;
 
 //пин шима
 int pin_output = 8;
