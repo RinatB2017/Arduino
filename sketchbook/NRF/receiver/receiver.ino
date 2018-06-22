@@ -21,6 +21,7 @@ void setup() {
 
   // монитор порта
   Serial.begin(9600);
+  Serial.println("Init receiver");
 }
 
 void loop() {

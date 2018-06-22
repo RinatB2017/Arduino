@@ -11,6 +11,9 @@
 RF24 radio(9, 10);
 
 void setup() {
+  Serial.begin(9600);
+  Serial.println("Init transmitter");
+
   // инициализация nRF24L01+
   radio.begin();
   // задаем канал для передачи данных (от 0 до 127)
@@ -38,4 +41,7 @@ void loop() {
   data[1] = 80;
   // отправляем данные
   radio.write(&data, sizeof(data));
+
+  Serial.println("send data...");
+  delay(1000);
 }
