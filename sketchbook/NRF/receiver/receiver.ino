@@ -13,6 +13,8 @@ int address_pin_1 = 7;
 
 //пин шима
 int pin_output = 8;
+
+uint16_t old_data = 0;
 //--------------------------------------------------------------------------------
 #pragma pack (push, 1)
 
@@ -88,6 +90,12 @@ void loop()
     // читаем данные
     radio.read(&data, sizeof(data));
     analogWrite(pin_output, data);
+	
+	if(data != old_data)
+	{
+		old_data = data;
+		Serial.println(data);
+	}
   }
 }
 //---------------------------------------------------------------
