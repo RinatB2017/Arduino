@@ -17,9 +17,7 @@ int analog_pin_2 = A1;
 int analog_pin_3 = A2;
 
 //пины кнопок
-int btn_1_pin = 6;
-int btn_2_pin = 7;
-int btn_3_pin = 8;
+int btn_1_pin = 2;
 //---------------------------------------------------------------
 int value_pin_1 = 0;
 int value_pin_2 = 0;
@@ -28,8 +26,6 @@ int value_pin_3 = 0;
 void init_gpio()
 {
   pinMode(btn_1_pin,  INPUT_PULLUP);
-  pinMode(btn_2_pin,  INPUT_PULLUP);
-  pinMode(btn_3_pin,  INPUT_PULLUP);
 }
 //---------------------------------------------------------------
 void read_data()
@@ -42,16 +38,6 @@ void read_data()
 bool check_btn_1()
 {
   return (digitalRead(btn_1_pin) == LOW);
-}
-//---------------------------------------------------------------
-bool check_btn_2()
-{
-  return (digitalRead(btn_2_pin) == LOW);
-}
-//---------------------------------------------------------------
-bool check_btn_3()
-{
-  return (digitalRead(btn_3_pin) == LOW);
 }
 //---------------------------------------------------------------
 void init_transmitter()
@@ -76,8 +62,8 @@ void init_transmitter()
 //---------------------------------------------------------------
 void pause()
 {
-  Serial.println("pause");
-  delay(1000);
+  //Serial.println("pause");
+  delay(100);
 }
 //---------------------------------------------------------------
 void send_data(int address, int value)

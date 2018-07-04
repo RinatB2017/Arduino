@@ -8,11 +8,13 @@
 RF24 radio(9, 10);
 //---------------------------------------------------------------
 //адресные пины
-int address_pin_0 = 6;
-int address_pin_1 = 7;
+int address_pin_0 = 2;
+int address_pin_1 = 3;
 
 //пин шима
-int pin_output = 8;
+int pin_output = 5;
+
+int divider = 5;
 
 uint16_t old_data = 0;
 //--------------------------------------------------------------------------------
@@ -78,6 +80,8 @@ void setup()
 
   init_gpio();
   init_receiver();
+
+  analogWrite(pin_output, 1023 / divider);
 }
 //---------------------------------------------------------------
 void loop()
@@ -89,13 +93,13 @@ void loop()
   {
     // читаем данные
     radio.read(&data, sizeof(data));
-    analogWrite(pin_output, data);
-	
-	if(data != old_data)
-	{
-		old_data = data;
-		Serial.println(data);
-	}
+    analogWrite(pin_output, data / divider);
+
+    if (data != old_data)
+    {
+      old_data = data;
+      Serial.println("value " + String(data / divider));
+    }
   }
 }
 //---------------------------------------------------------------
