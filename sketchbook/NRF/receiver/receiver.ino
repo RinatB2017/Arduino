@@ -17,7 +17,7 @@ int pin_output = 5;
 int divider = 5;
 
 uint16_t old_data = 0;
-//--------------------------------------------------------------------------------
+//---------------------------------------------------------------
 #pragma pack (push, 1)
 
 union U_BYTE
@@ -44,7 +44,7 @@ void init_gpio()
   pinMode(address_pin_1,  INPUT_PULLUP);
 
   pinMode(pin_output, OUTPUT);
-  analogWrite(pin_output, 255);
+  analogWrite(pin_output, 1023 / divider);
 }
 //---------------------------------------------------------------
 int get_address()
@@ -62,6 +62,7 @@ void init_receiver()
   radio.begin();
   // задаем канал для приёма данных. Идентично передатчику
   radio.setChannel(get_address());
+  Serial.println(get_address()); //посмотреть адрес
   // Скорость передачи данных. Идентично передатчику
   radio.setDataRate (RF24_1MBPS);
   // Мощность передатчика. Идентично передатчику

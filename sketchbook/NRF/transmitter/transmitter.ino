@@ -68,8 +68,6 @@ void pause()
 //---------------------------------------------------------------
 void send_data(int address, int value)
 {
-  int data[2] = {0, 0};
-
   radio.setChannel(address);
 
   // отправляем данные
@@ -89,12 +87,13 @@ void loop()
 {
   read_data();
 
-  //передаем последовательно на 3 адреса (0..2)
+  //передаем последовательно на 3 адреса (1..3)
   if (check_btn_1())
   {
-    send_data(0, value_pin_1);
-    send_data(1, value_pin_2);
-    send_data(2, value_pin_3);
+      // нулевого адреса нет
+      send_data(1, value_pin_1);
+      send_data(2, value_pin_2);
+      send_data(3, value_pin_3);
   }
 
   //ждем
