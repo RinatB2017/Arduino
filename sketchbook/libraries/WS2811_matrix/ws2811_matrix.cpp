@@ -256,7 +256,9 @@ bool WS2811_matrix::set_left_pixel_back(unsigned int addr, CRGB color)
 {
     if (addr < SIZE_MATRIX_2)
     {
-      set_pixel_matrix_2(addr, color);
+      //FIXME надо перевернуть
+      set_pixel_matrix_2(SIZE_MATRIX_2 - addr, color);
+      //set_pixel_matrix_2(addr, color);
       return true;
     }
     if (addr < (SIZE_MATRIX_2 + (SIZE_MATRIX_3 / 2)))
