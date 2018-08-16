@@ -2,4 +2,5 @@
 // Copyright Benoit Blanchon 2014-2018
 // MIT License
 
-#include "src/ArduinoJson.h"
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
