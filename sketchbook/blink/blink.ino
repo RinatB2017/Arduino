@@ -1,20 +1,13 @@
-/*
-   тест
-*/
-
-int pin_led = 13;
-
 void setup() {
-  Serial.begin(57600);
-  Serial.println("Init");
-  
-  pinMode(pin_led,  OUTPUT);
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
+// the loop function runs over and over again forever
 void loop() {
-  digitalWrite(pin_led, HIGH);
-  delay(500);
-  digitalWrite(pin_led, LOW);
-  delay(500);
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);                       // wait for a second
 }
 
