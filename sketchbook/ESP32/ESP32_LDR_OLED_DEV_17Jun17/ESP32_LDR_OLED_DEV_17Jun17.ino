@@ -24,36 +24,24 @@
   This sketch created by JohnnyFRX 17Jun17
 */
 
-
-#include "SSD1306.h" // alias for `#include "SSD1306Wire.h"'
-
-int sensorPin = 36;   // select the input pin for ldr
-int sensorValue = 0;  // variable to store the value coming from the sensor
-
-// Initialize the OLED display using Wire library
-SSD1306  display(0x3c, 5, 4);
+#include "lcd.h"
 
 void setup() {
-  pinMode(sensorPin, INPUT);
-  display.init();
-  display.flipScreenVertically();
-  display.setFont(ArialMT_Plain_24);
+  lcd_init();
+
+  lcd_clear();
+  //lcd_print(0, 0,  "WWWWWWWW0");
+  //lcd_print(0, 15, "wwwwwwwwww0");
+  //lcd_print(0, 30, "01234567890123");
+  //lcd_print(0, 45, "String 3");
+
+  lcd_print_str(0, "String 0");
+  lcd_print_str(1, "String 1");
+  lcd_print_str(2, "String 2");
+  lcd_print_str(3, "String 3");
 }
 
 void loop() {
-  sensorValue = analogRead(sensorPin);
-  delay(1000);
-  display.clear();
-  Serial.print(sensorValue);
 
-  display.setColor(WHITE);
-  display.setTextAlignment(TEXT_ALIGN_CENTER);
-  //display.drawString(64, 15, String(sensorValue));
-  display.drawString(64, 15, "Hello");
-  display.setFont(ArialMT_Plain_24);
-
-  display.display();
-
-  delay(10);
 }
 
