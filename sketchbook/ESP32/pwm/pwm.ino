@@ -1,4 +1,7 @@
+
 #include "esp32-hal-ledc.h"
+
+// http://data-ru.ru/forum/viewtopic.php?p=5510&sid=76c6636031d4438af65e50503ca8a201
 
 int pwm_channel = 0;
 int pwm_freq = 50;

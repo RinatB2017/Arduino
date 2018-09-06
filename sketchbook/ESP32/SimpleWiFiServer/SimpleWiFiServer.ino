@@ -46,20 +46,26 @@ int port = 15000;
 WiFiServer server(port);
 WiFiClient client;
 
-int led_r = 10;
+void draw_progress_bar(int value) {
+  int x = 0;
+  int y = 45;
+  int w = 127;
+  int h = 15;
 
-void led_on() {
-  lcd_draw_led(display.getWidth() - led_r - 1,
-               display.getHeight() - led_r - 1,
-               led_r, 1);
+  display.setColor(WHITE);
+  
+  display.drawLine(x, y, x+w, y);
+  display.drawLine(x, y+h, x+w, y+h);
+  display.drawLine(x, y, x, y+h);
+  display.drawLine(x+w, y, x+w, y+h);
 
-}
+  display.setColor(BLACK);
+  display.fillRect(x+1, y+1, w-1, h-1);
 
-void led_off() {
-  lcd_draw_led(display.getWidth() - led_r - 1,
-               display.getHeight() - led_r - 1,
-               led_r, 0);
-
+  display.setColor(WHITE);
+  display.fillRect(x+1, y+1, value / 8 - 1, h-1);
+  
+  display.display();
 }
 
 void clear_pwm_text(int x, int y, int w, int h) {
@@ -164,7 +170,7 @@ void setup()
   lcd_print_str(0, ssid);
   lcd_print_str(1, WiFi.localIP().toString() + ":" + port);
 
-  led_off();
+  draw_progress_bar(0);
 
   server.begin();
 }
@@ -206,22 +212,24 @@ void loop()
   if (req.indexOf("/gpio/0") != -1)
   {
     val = 0;
-    led_off();
     ledcWrite(pwm_channel, 0);
+
+    draw_progress_bar(0);
   }
   else if (req.indexOf("/gpio/1") != -1)
   {
     val = 1;
-    led_on();
     ledcWrite(pwm_channel, 0xFF);
+
+    draw_progress_bar(1023);
   }
   else if (req.indexOf("/pwm/") != -1)
   {
     pwm_value = get_pwm_value(req);
-    clear_pwm_text(0, 45, 64, 15);
-    lcd_print_str(3, String(pwm_value));
-
     ledcWrite(pwm_channel, pwm_value);
+
+    clear_pwm_text(0, 45, 64, 15);
+    draw_progress_bar(pwm_value);
   }
   else {
     Serial.println("invalid request");
