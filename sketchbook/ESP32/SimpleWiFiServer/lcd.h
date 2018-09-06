@@ -50,7 +50,7 @@ void lcd_print_str(int num_str, String text) {
   }
 }
 
-void draw_led(int x, int y, int r, bool on) {
+void lcd_draw_led(int x, int y, int r, bool on) {
   if (on)
     display.setColor(WHITE);
   else
