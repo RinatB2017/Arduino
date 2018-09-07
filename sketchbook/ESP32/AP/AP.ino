@@ -27,7 +27,8 @@ void setup() {
 
   lcd_clear();
   lcd_print_str(0, ssid);
-  lcd_print_str(1, WiFi.softAPIP().toString());
+  lcd_print_str(1, password);
+  lcd_print_str(2, WiFi.softAPIP().toString());
 
   server.begin();
 }
