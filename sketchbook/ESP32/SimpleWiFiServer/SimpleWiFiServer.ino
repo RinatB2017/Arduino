@@ -37,6 +37,11 @@ int pwm_pin = 16;
 int pwm_value = 0;
 
 #if 1
+const char* ssid     = "RT-WiFi_DBA0";
+const char* password = "CUDRM67c";
+#endif
+
+#if 0
 const char* ssid = "Wifi";
 const char* password = "88888888";
 #endif
