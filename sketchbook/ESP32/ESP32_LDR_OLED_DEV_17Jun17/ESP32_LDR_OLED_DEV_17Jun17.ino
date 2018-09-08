@@ -24,7 +24,7 @@
   This sketch created by JohnnyFRX 17Jun17
 */
 
-#include "lcd.h"
+#include <lcd_display.h>
 
 void setup() {
   lcd_init();
