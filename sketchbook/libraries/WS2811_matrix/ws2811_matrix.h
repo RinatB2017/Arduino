@@ -22,6 +22,17 @@
 #define MAX_ADDRESS_SHOULDERS SIZE_MATRIX_6
 #define MAX_ADDRESS_BACK      (SIZE_MATRIX_2 + (SIZE_MATRIX_3 / 2))
 
+#ifdef ESP32
+#define LED_PIN_1 0
+#define LED_PIN_2 2
+#define LED_PIN_3 4
+#define LED_PIN_4 5
+#define LED_PIN_5 12
+#define LED_PIN_6 13
+#define LED_PIN_7 14
+#define LED_PIN_8 15
+#define LED_PIN_9 16
+#else
 #define LED_PIN_1 2
 #define LED_PIN_2 3
 #define LED_PIN_3 4
@@ -31,6 +42,7 @@
 #define LED_PIN_7 8
 #define LED_PIN_8 9
 #define LED_PIN_9 10
+#endif
 
 class WS2811_matrix
 {
