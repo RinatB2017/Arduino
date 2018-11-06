@@ -1,14 +1,15 @@
 //---------------------------------------------------------------
 #include "FastSPI_LED2.h"
 //---------------------------------------------------------------
-#if 1
+#if 0
 # define NUM_LEDS_1  6
 #else
-# define NUM_LEDS_1  144
+# define NUM_LEDS_1  144*4
 #endif
 
 #define LED_PIN_1   8
 #define BRIGHTNESS  25 // maximum brightness 96
+#define DELAY_MS    10
 //---------------------------------------------------------------
 enum {
   RED = 0,
@@ -81,9 +82,8 @@ void loop()
   clear_1();
   update_1();
   LEDS.show();
-  delay(100);
+  delay(DELAY_MS);
 }
 //---------------------------------------------------------------
-
 
 
