@@ -4,8 +4,8 @@
 #define BAUDRATE  57600
 #define work_serial    Serial
 //---------------------------------------------------------------
-#define LEDS_PER_STRIP  6
-#define LED_PIN 9
+#define LEDS_PER_STRIP  52
+#define LED_PIN 8
 //---------------------------------------------------------------
 CRGB line_leds[LEDS_PER_STRIP];
 //---------------------------------------------------------------

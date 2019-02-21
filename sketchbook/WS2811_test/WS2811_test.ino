@@ -1,15 +1,15 @@
 //---------------------------------------------------------------
 #include "FastSPI_LED2.h"
 //---------------------------------------------------------------
-#if 0
-# define NUM_LEDS_1  6
+#if 1
+# define NUM_LEDS_1  5
 #else
 # define NUM_LEDS_1  144*4
 #endif
 
 #define LED_PIN_1   8
-#define BRIGHTNESS  25 // maximum brightness 96
-#define DELAY_MS    10
+#define BRIGHTNESS  255 // maximum brightness 96
+#define DELAY_MS    50
 //---------------------------------------------------------------
 enum {
   RED = 0,
@@ -28,6 +28,31 @@ void setup()
   delay(2000);
   LEDS.setBrightness(BRIGHTNESS);
   LEDS.addLeds<WS2811, LED_PIN_1, RGB>(leds1, NUM_LEDS_1);
+
+#if 1  
+  clear_1();
+
+//  CRGB led;
+//  led.r = 255;
+//  led.g = 255;
+//  led.b = 255;
+//
+//  leds1[0] = led;
+//  leds1[4] = led;
+
+  leds1[0] = CRGB::Red;
+  leds1[1] = CRGB::Green;
+  leds1[2] = CRGB::Blue;
+  
+  LEDS.show();
+#endif
+  
+#if 0
+  for (int n = 0; n < NUM_LEDS_1; n++)
+  {
+    leds1[n] = 0;
+  }
+#endif
 }
 //---------------------------------------------------------------
 void clear_1(void)
@@ -79,10 +104,12 @@ void update_1(void)
 //---------------------------------------------------------------
 void loop()
 {
+#if 0  
   clear_1();
   update_1();
   LEDS.show();
   delay(DELAY_MS);
+#endif
 }
 //---------------------------------------------------------------
 
