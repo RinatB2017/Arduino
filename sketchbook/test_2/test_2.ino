@@ -66,7 +66,7 @@ uint32_t crc32(const char *buf, size_t len)
   crc = ~crc;
   q = buf + len;
   for (p = buf; p < q; p++) {
-    octet = (uint8_t)*p;  /* Cast to unsigned octet. */
+    octet = (uint8_t) * p; /* Cast to unsigned octet. */
     crc = (crc >> 8) ^ table[(crc & 0xff) ^ octet];
   }
   return ~crc;
@@ -76,6 +76,7 @@ void setup()
 {
   work_serial.begin(BAUDRATE);
 
+#if 0
   //00 00 04 14FF942E C0F4CF4A
   modbus_buf[0]  = 0x00;
   modbus_buf[1]  = 0x00;
@@ -92,6 +93,20 @@ void setup()
   modbus_buf[10] = 0x4A;
 
   uint32_t calc_crc32 = crc32((char *)&modbus_buf[sizeof(HEADER) + sizeof(CMD_1)], sizeof(uint32_t));
+#endif
+
+#if 1
+  //000000FF41D912
+  modbus_buf[0]  = 0x00;
+  modbus_buf[1]  = 0x00;
+  modbus_buf[2]  = 0x00;
+  modbus_buf[3]  = 0xFF;
+  modbus_buf[4]  = 0x41;
+  modbus_buf[5]  = 0xD9;
+  modbus_buf[6]  = 0x12;
+  
+  uint32_t calc_crc32 = crc32((char *)&modbus_buf, sizeof(HEADER));
+#endif
 
   work_serial.println(sizeof(HEADER));
   work_serial.println(sizeof(CMD_1));
