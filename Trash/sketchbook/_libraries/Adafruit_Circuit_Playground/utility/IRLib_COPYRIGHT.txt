@@ -1,4 +1,4 @@
-﻿Copyright information for IRLib – an Arduino library for 
+Copyright information for IRLib – an Arduino library for 
 infrared encoding and decoding
 
 IRLib2 is a collection of libraries which we will collectively referred 

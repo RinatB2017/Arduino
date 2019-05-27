@@ -1,4 +1,4 @@
-﻿/*
+/*
 TrinketFakeUsbSerialHostSW, by Frank Zhao
 
 Copyright (c) 2013 Adafruit Industries
