@@ -4,7 +4,7 @@
 #define NUM_LEDS  144
 
 #define LED_PIN     9
-#define BRIGHTNESS  32
+#define BRIGHTNESS  255
 #define DELAY_MS    50
 #define LED_LEN     9
 
