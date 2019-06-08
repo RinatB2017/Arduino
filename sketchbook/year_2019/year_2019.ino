@@ -1,10 +1,13 @@
 //---------------------------------------------------------------
 #include "FastLED.h"
 //---------------------------------------------------------------
+#define led_type  RGB
+//#define led_type  GRB
+//---------------------------------------------------------------
 #define NUM_LEDS  144
 
 #define LED_PIN     9
-#define BRIGHTNESS  255
+#define BRIGHTNESS  32
 #define DELAY_MS    50
 #define LED_LEN     9
 
@@ -12,11 +15,17 @@
 #define LEN_CLEAN_LEDS  (NUM_LEDS + (LED_LEN * 3))
 
 //#define COLOR_1     CRGB::Gold
+
 #define COLOR_1     CRGB::Red
 #define COLOR_2     CRGB::Green
 #define COLOR_3     CRGB::Blue
 
-CRGB current_color = CRGB::Gold;
+// триколор
+//#define COLOR_1     CRGB::White
+//#define COLOR_2     CRGB::Blue
+//#define COLOR_3     CRGB::Red
+
+CRGB current_color = CRGB::Black;
 int index_color = 0;
 //---------------------------------------------------------------
 CRGB clean_leds[LEN_CLEAN_LEDS];
@@ -85,11 +94,8 @@ void update_1()
   delay(DELAY_MS);
 }
 //---------------------------------------------------------------
-void setup()
+void prepare_buf()
 {
-  controllers = &FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-
-#if 1
   index = 0;
   index_color = 0;
   int temp_index = 0;
@@ -127,7 +133,6 @@ void setup()
     clean_leds[index++] = current_color;
   }
   index = 0;
-#endif
 }
 //---------------------------------------------------------------
 void update_2()
@@ -143,6 +148,12 @@ void update_2()
   }
   controllers->show(leds, NUM_LEDS, BRIGHTNESS);
   delay(DELAY_MS);
+}
+//---------------------------------------------------------------
+void setup()
+{
+  controllers = &FastLED.addLeds<WS2812, LED_PIN, led_type>(leds, NUM_LEDS);
+  prepare_buf();
 }
 //---------------------------------------------------------------
 void loop()

@@ -1,6 +1,9 @@
 //---------------------------------------------------------------
 #include "FastLED.h"
 //---------------------------------------------------------------
+#define led_type  RGB
+//#define led_type  GRB
+//---------------------------------------------------------------
 #define BAUDRATE  57600
 #define work_serial    Serial
 //---------------------------------------------------------------
@@ -21,7 +24,7 @@ int i_color_B = 0;
 //---------------------------------------------------------------
 void init_leds(void)
 {
-  controllers = &FastLED.addLeds<WS2812, LED_PIN, GRB>(line_leds, LEDS_PER_STRIP);
+  controllers = &FastLED.addLeds<WS2812, LED_PIN, led_type>(line_leds, LEDS_PER_STRIP);
 }
 //---------------------------------------------------------------
 void show_leds(void)
