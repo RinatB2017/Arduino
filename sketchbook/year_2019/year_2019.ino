@@ -4,18 +4,16 @@
 #define NUM_LEDS  144
 
 #define LED_PIN     9
-#define BRIGHTNESS  10 // maximum brightness 96
+#define BRIGHTNESS  32
 #define DELAY_MS    50
 #define LED_LEN     9
 
 #define LEN_LEDS        NUM_LEDS
 #define LEN_CLEAN_LEDS  (NUM_LEDS + (LED_LEN * 3))
 
-//#define COLOR_1     CRGB::Magenta
-//#define COLOR_2     CRGB::Green
-
-#define COLOR_1     CRGB::Gold
-#define COLOR_2     CRGB::Red
+//#define COLOR_1     CRGB::Gold
+#define COLOR_1     CRGB::Red
+#define COLOR_2     CRGB::Green
 #define COLOR_3     CRGB::Blue
 
 CRGB current_color = CRGB::Gold;
@@ -153,5 +151,3 @@ void loop()
   update_2();
 }
 //---------------------------------------------------------------
-
-
