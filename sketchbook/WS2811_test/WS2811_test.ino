@@ -2,13 +2,13 @@
 #include "FastLED.h"
 //---------------------------------------------------------------
 #if 1
-# define NUM_LEDS  6
+# define NUM_LEDS  16
 #else
 # define NUM_LEDS  144*4
 #endif
 
 #define LED_PIN     9
-#define BRIGHTNESS  64
+#define BRIGHTNESS  255
 #define DELAY_MS    50
 //---------------------------------------------------------------
 enum {

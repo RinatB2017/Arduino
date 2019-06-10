@@ -8,7 +8,10 @@
 
 #define LED_PIN     9
 #define BRIGHTNESS  32
-#define DELAY_MS    50
+
+//#define DELAY_MS    50
+#define DELAY_US  50000
+
 #define LED_LEN     9
 
 #define LEN_LEDS        NUM_LEDS
@@ -34,64 +37,16 @@ CLEDController *controllers;
 
 int index = 0;
 //---------------------------------------------------------------
-void update_1()
+void delay_ms(int delay_milli_sec)
 {
-  index = 0;
-  while (index < NUM_LEDS)
-  {
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_1;
-    }
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_2;
-    }
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_3;
-    }
-  }
-  controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay(DELAY_MS);
-
-  index = 0;
-  while (index < NUM_LEDS)
-  {
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_2;
-    }
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_3;
-    }
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_1;
-    }
-  }
-  controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay(DELAY_MS);
-
-  index = 0;
-  while (index < NUM_LEDS)
-  {
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_3;
-    }
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_1;
-    }
-    for (int n = 0; n < LED_LEN; n++)
-    {
-      leds[index++] = COLOR_2;
-    }
-  }
-  controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay(DELAY_MS);
+  if(delay_milli_sec == 0) return;
+  delay(delay_milli_sec);
+}
+//---------------------------------------------------------------
+void delay_us(int delay_micro_sec)
+{
+  if(delay_micro_sec == 0) return;
+  delayMicroseconds(delay_micro_sec);
 }
 //---------------------------------------------------------------
 void prepare_buf()
@@ -135,6 +90,66 @@ void prepare_buf()
   index = 0;
 }
 //---------------------------------------------------------------
+void update_1()
+{
+  index = 0;
+  while (index < NUM_LEDS)
+  {
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_1;
+    }
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_2;
+    }
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_3;
+    }
+  }
+  controllers->show(leds, NUM_LEDS, BRIGHTNESS);
+  delay_us(DELAY_US);
+
+  index = 0;
+  while (index < NUM_LEDS)
+  {
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_2;
+    }
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_3;
+    }
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_1;
+    }
+  }
+  controllers->show(leds, NUM_LEDS, BRIGHTNESS);
+  delay_us(DELAY_US);
+
+  index = 0;
+  while (index < NUM_LEDS)
+  {
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_3;
+    }
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_1;
+    }
+    for (int n = 0; n < LED_LEN; n++)
+    {
+      leds[index++] = COLOR_2;
+    }
+  }
+  controllers->show(leds, NUM_LEDS, BRIGHTNESS);
+  delay_us(DELAY_US);
+}
+//---------------------------------------------------------------
 void update_2()
 {
   index ++;
@@ -147,7 +162,7 @@ void update_2()
     leds[n] = clean_leds[n + index];
   }
   controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay(DELAY_MS);
+  delay_us(DELAY_US);
 }
 //---------------------------------------------------------------
 void setup()
