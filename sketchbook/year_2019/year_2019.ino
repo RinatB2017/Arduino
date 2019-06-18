@@ -9,8 +9,8 @@
 #define LED_PIN     9
 #define BRIGHTNESS  32
 
-//#define DELAY_MS    50
-#define DELAY_US  50000
+#define DELAY_MS    1000
+//#define DELAY_US  100000
 
 #define LED_LEN     9
 
@@ -109,7 +109,8 @@ void update_1()
     }
   }
   controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay_us(DELAY_US);
+//  delay_us(DELAY_US);
+  delay_ms(DELAY_MS);
 
   index = 0;
   while (index < NUM_LEDS)
@@ -128,7 +129,8 @@ void update_1()
     }
   }
   controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay_us(DELAY_US);
+//  delay_us(DELAY_US);
+  delay_ms(DELAY_MS);
 
   index = 0;
   while (index < NUM_LEDS)
@@ -147,7 +149,8 @@ void update_1()
     }
   }
   controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay_us(DELAY_US);
+//  delay_us(DELAY_US);
+  delay_ms(DELAY_MS);
 }
 //---------------------------------------------------------------
 void update_2()
@@ -162,7 +165,8 @@ void update_2()
     leds[n] = clean_leds[n + index];
   }
   controllers->show(leds, NUM_LEDS, BRIGHTNESS);
-  delay_us(DELAY_US);
+  //delay_us(DELAY_US);
+  delay_ms(DELAY_MS);
 }
 //---------------------------------------------------------------
 void setup()
