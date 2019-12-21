@@ -58,17 +58,7 @@ extern const char GSLC_PMEM ERRSTR_PXD_NULL[];
 //
 // - This file extends the core GUIslice functionality with
 //   additional widget types
-// - After adding any widgets to GUIslice_ex, a unique
-//   enumeration (GSLC_TYPEX_*) should be added to "GUIslice.h"
 //
-//   TODO: Consider whether we should remove the need to update
-//         these enumerations in "GUIslice.h"; we could instead
-//         define a single "GSLC_TYPEX" in GUIslice.h but then
-//         allow "GUIslice_ex.h" to create a new set of unique
-//         enumerations. This way extended elements could be created
-//         in GUIslice_ex and no changes at all would be required
-//         in GUIslice.
-
 // ----------------------------------------------------------------------------
 
 
@@ -86,7 +76,7 @@ gslc_tsElemRef* gslc_ElemXSliderCreate(gslc_tsGui* pGui,int16_t nElemId,int16_t 
 {
   if ((pGui == NULL) || (pXData == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderCreate";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return NULL;
   }
   gslc_tsElem     sElem;
@@ -98,6 +88,11 @@ gslc_tsElemRef* gslc_ElemXSliderCreate(gslc_tsGui* pGui,int16_t nElemId,int16_t 
   sElem.nFeatures        |= GSLC_ELEM_FEA_GLOW_EN;
 
   sElem.nGroup            = GSLC_GROUP_ID_NONE;
+
+  // Range check on nPos
+  if (nPos < nPosMin) { nPos = nPosMin; }
+  if (nPos > nPosMax) { nPos = nPosMax; }
+
   pXData->nPosMin         = nPosMin;
   pXData->nPosMax         = nPosMax;
   pXData->nPos            = nPos;
@@ -139,7 +134,7 @@ void gslc_ElemXSliderSetStyle(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderSetStyle";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -159,7 +154,7 @@ int gslc_ElemXSliderGetPos(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef)
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderGetPos";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return 0;
   }
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -173,7 +168,7 @@ void gslc_ElemXSliderSetPos(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,int16_t nP
 {
   if ((pGui == NULL) || (pElemRef == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderSetPos";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*      pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -206,7 +201,7 @@ void gslc_ElemXSliderSetPosFunc(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,GSLC_C
 {
   if ((pElemRef == NULL) || (funcCb == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderSetPosFunc";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*      pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -223,7 +218,7 @@ bool gslc_ElemXSliderDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
 {
   if ((pvGui == NULL) || (pvElemRef == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderDraw";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return false;
   }
   // Typecast the parameters to match the GUI and element types
@@ -235,7 +230,7 @@ bool gslc_ElemXSliderDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   gslc_tsXSlider* pSlider;
   pSlider = (gslc_tsXSlider*)(pElem->pXData);
   if (pSlider == NULL) {
-    GSLC_DEBUG_PRINT("ERROR: ElemXSliderDraw(%s) pXData is NULL\n","");
+    GSLC_DEBUG2_PRINT("ERROR: ElemXSliderDraw(%s) pXData is NULL\n","");
     return false;
   }
 
@@ -250,6 +245,10 @@ bool gslc_ElemXSliderDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   uint16_t        nTickDiv  = pSlider->nTickDiv;
   int16_t         nTickLen  = pSlider->nTickLen;
   gslc_tsColor    colTick   = pSlider->colTick;
+
+  // Range check on nPos
+  if (nPos < nPosMin) { nPos = nPosMin; }
+  if (nPos > nPosMax) { nPos = nPosMax; }
 
   int16_t nX0,nY0,nX1,nY1,nXMid,nYMid;
   nX0 = pElem->rElem.x;
@@ -366,7 +365,7 @@ bool gslc_ElemXSliderTouch(void* pvGui,void* pvElemRef,gslc_teTouch eTouch,int16
 
   if ((pvGui == NULL) || (pvElemRef == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXSliderTouch";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return false;
   }
   gslc_tsGui*           pGui = NULL;

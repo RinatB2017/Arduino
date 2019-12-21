@@ -30,6 +30,12 @@
 // =======================================================================
 /// \file XGauge.c
 
+// *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+// WARNING: The XGauge element has been replaced by XProgress / XRadial / XRamp
+//          Please update your code according to the migration notes in:
+//          https://github.com/ImpulseAdventure/GUIslice/pull/157
+//          XGauge may be removed in a future release.
+// *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
 
 // GUIslice library
@@ -60,17 +66,7 @@ extern const char GSLC_PMEM ERRSTR_PXD_NULL[];
 //
 // - This file extends the core GUIslice functionality with
 //   additional widget types
-// - After adding any widgets to GUIslice_ex, a unique
-//   enumeration (GSLC_TYPEX_*) should be added to "GUIslice.h"
 //
-//   TODO: Consider whether we should remove the need to update
-//         these enumerations in "GUIslice.h"; we could instead
-//         define a single "GSLC_TYPEX" in GUIslice.h but then
-//         allow "GUIslice_ex.h" to create a new set of unique
-//         enumerations. This way extended elements could be created
-//         in GUIslice_ex and no changes at all would be required
-//         in GUIslice.
-
 // ----------------------------------------------------------------------------
 
 
@@ -89,7 +85,7 @@ gslc_tsElemRef* gslc_ElemXGaugeCreate(gslc_tsGui* pGui,int16_t nElemId,int16_t n
 {
   if ((pGui == NULL) || (pXData == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeCreate";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return NULL;
   }
   gslc_tsElem     sElem;
@@ -120,6 +116,7 @@ gslc_tsElemRef* gslc_ElemXGaugeCreate(gslc_tsGui* pGui,int16_t nElemId,int16_t n
   sElem.colElemFillGlow   = GSLC_COL_BLACK;
   sElem.colElemFrame      = GSLC_COL_GRAY;
   sElem.colElemFrameGlow  = GSLC_COL_GRAY;
+  GSLC_DEBUG_PRINT("NOTE: XGauge has been replaced by XProgress/XRadial/XRamp\n","");
   if (nPage != GSLC_PAGE_NONE) {
     pElemRef = gslc_ElemAdd(pGui,nPage,&sElem,GSLC_ELEMREF_DEFAULT);
     return pElemRef;
@@ -140,7 +137,7 @@ void gslc_ElemXGaugeSetStyle(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gslc_teXG
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeSetStyle";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -158,7 +155,7 @@ void gslc_ElemXGaugeSetIndicator(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gslc_
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeSetIndicator";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -178,7 +175,7 @@ void gslc_ElemXGaugeSetTicks(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gslc_tsCo
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeSetTicks";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -198,7 +195,7 @@ void gslc_ElemXGaugeUpdate(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,int16_t nVa
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeUpdate";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
@@ -228,7 +225,7 @@ void gslc_ElemXGaugeSetFlip(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,bool bFlip
 {
   if (pElemRef == NULL) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeSetFlip";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return;
   }
 
@@ -236,7 +233,7 @@ void gslc_ElemXGaugeSetFlip(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,bool bFlip
   gslc_tsElem*    pElem = gslc_GetElemFromRef(pGui,pElemRef);
   gslc_tsXGauge*  pGauge  = (gslc_tsXGauge*)(pElem->pXData);
   if (pGauge == NULL) {
-    GSLC_DEBUG_PRINT("ERROR: gslc_ElemXGaugeSetFlip(%s) pXData is NULL\n","");
+    GSLC_DEBUG2_PRINT("ERROR: gslc_ElemXGaugeSetFlip(%s) pXData is NULL\n","");
     return;
   }
   pGauge->bFlip = bFlip;
@@ -255,7 +252,7 @@ bool gslc_ElemXGaugeDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
 {
   if ((pvGui == NULL) || (pvElemRef == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGaugeDraw";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return false;
   }
 
@@ -268,7 +265,7 @@ bool gslc_ElemXGaugeDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   gslc_tsXGauge* pGauge;
   pGauge = (gslc_tsXGauge*)(pElem->pXData);
   if (pGauge == NULL) {
-    GSLC_DEBUG_PRINT("ERROR: ElemXGaugeDraw(%s) pXData is NULL\n","");
+    GSLC_DEBUG2_PRINT("ERROR: ElemXGaugeDraw(%s) pXData is NULL\n","");
     return false;
   }
 
@@ -334,7 +331,7 @@ bool gslc_ElemXGaugeDrawProgressBar(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gs
   int32_t nTmpL = 0;
 
   if (nRng == 0) {
-    GSLC_DEBUG_PRINT("ERROR: ElemXGaugeDraw() Zero gauge range [%d,%d]\n",nMin,nMax);
+    GSLC_DEBUG2_PRINT("ERROR: ElemXGaugeDraw() Zero gauge range [%d,%d]\n",nMin,nMax);
     return false;
   }
 
@@ -344,19 +341,10 @@ bool gslc_ElemXGaugeDrawProgressBar(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gs
     nScl = nElemW*32768/nRng;
   }
 
-  // Calculate the control midpoint (for display purposes)
-  if ((nMin == 0) && (nMax >= 0)) {
-    nGaugeMid = 0;
-  } else if ((nMin < 0) && (nMax > 0)) {
-    nTmpL     = -( (int32_t)nMin * (int32_t)nScl / 32768);
-    nGaugeMid = (int16_t)nTmpL;
-  } else if ((nMin < 0) && (nMax == 0)) {
-    nTmpL     = -( (int32_t)nMin * (int32_t)nScl / 32768);
-    nGaugeMid = (int16_t)nTmpL;
-  } else {
-    GSLC_DEBUG_PRINT("ERROR: ElemXGaugeDraw() Unsupported gauge range [%d,%d]\n",nMin,nMax);
-    return false;
-  }
+  // Calculate the control midpoint/zeropoint (for display purposes)
+  nTmpL = -((int32_t)nMin * (int32_t)nScl / 32768);
+  nGaugeMid = (int16_t)nTmpL;
+
 
   // Calculate the length of the bar
   // - Use long mult/divide to avoid need for floating point
@@ -419,27 +407,38 @@ bool gslc_ElemXGaugeDrawProgressBar(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gs
   //  nMin,nMax,nRng,pGauge->nGaugeVal,fScl,nGaugeMid,rGauge.x,rGauge.w);
   #endif
 
+  // Draw a frame around the gauge
+  // - Only draw this during full redraw
+  if (eRedraw == GSLC_REDRAW_FULL) {
+    gslc_DrawFrameRect(pGui, pElem->rElem, pElem->colElemFrame);
+  }
+
   // To avoid flicker, we only erase the portion of the gauge
   // that isn't "filled". Determine the gauge empty region and erase it
   // There are two empty regions (one in negative and one in positive)
+  int16_t nEmptyPos;
   if (bVert) {
     // Empty Region #1 (negative)
-    rEmpty = (gslc_tsRect){nElemX0,nElemY0,nElemX1-nElemX0+1,nGaugeY0-nElemY0+1};
+    nEmptyPos = (nGaugeY0 > nElemY1) ? nElemY1 : nGaugeY0;
+    rEmpty = (gslc_tsRect){nElemX0,nElemY0,nElemX1-nElemX0+1,nEmptyPos-nElemY0+1};
     rTmp = gslc_ExpandRect(rEmpty,-1,-1);
     gslc_DrawFillRect(pGui,rTmp,pElem->colElemFill);
     // Empty Region #2 (positive)
-    rEmpty = (gslc_tsRect){nElemX0,nGaugeY1,nElemX1-nElemX0+1,nElemY1-nGaugeY1+1};
+    nEmptyPos = (nGaugeY1 < nElemY0) ? nElemY0 : nGaugeY1;
+    rEmpty = (gslc_tsRect){nElemX0,nEmptyPos,nElemX1-nElemX0+1,nElemY1-nEmptyPos+1};
     rTmp = gslc_ExpandRect(rEmpty,-1,-1);
     gslc_DrawFillRect(pGui,rTmp,pElem->colElemFill);
   } else {
     // Empty Region #1 (negative)
-    rEmpty = (gslc_tsRect){nElemX0,nElemY0,nGaugeX0-nElemX0+1,nElemY1-nElemY0+1};
+    nEmptyPos = (nGaugeX0 > nElemX1) ? nElemX1 : nGaugeX0;
+    rEmpty = (gslc_tsRect){nElemX0,nElemY0,nEmptyPos-nElemX0+1,nElemY1-nElemY0+1};
     rTmp = gslc_ExpandRect(rEmpty,-1,-1);
-    gslc_DrawFillRect(pGui,rTmp,pElem->colElemFill);
+    gslc_DrawFillRect(pGui, rTmp, pElem->colElemFill);
     // Empty Region #2 (positive)
-    rEmpty = (gslc_tsRect){nGaugeX1,nElemY0,nElemX1-nGaugeX1+1,nElemY1-nElemY0+1};
+    nEmptyPos = (nGaugeX1 < nElemX0) ? nElemX0 : nGaugeX1;
+    rEmpty = (gslc_tsRect){nEmptyPos,nElemY0,nElemX1-nEmptyPos+1,nElemY1-nElemY0+1};
     rTmp = gslc_ExpandRect(rEmpty,-1,-1);
-    gslc_DrawFillRect(pGui,rTmp,pElem->colElemFill);
+    gslc_DrawFillRect(pGui, rTmp, pElem->colElemFill);
   }
 
   // Draw the gauge fill region
@@ -450,14 +449,16 @@ bool gslc_ElemXGaugeDrawProgressBar(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gs
 
   // Draw the midpoint line
   if (bVert) {
-    gslc_DrawLine(pGui, nElemX0, nElemY0+nGaugeMid, nElemX1, nElemY0+nGaugeMid, pElem->colElemFrame);
+    if (nElemY0 + nGaugeMid < nElemY1) {
+      gslc_DrawLine(pGui, nElemX0, nElemY0 + nGaugeMid, nElemX1, nElemY0 + nGaugeMid, pElem->colElemFrame);
+    }
   } else {
-    gslc_DrawLine(pGui, nElemX0+nGaugeMid, nElemY0, nElemX0+nGaugeMid, nElemY1, pElem->colElemFrame);
+    if (nElemX0 + nGaugeMid < nElemX1) {
+      gslc_DrawLine(pGui, nElemX0 + nGaugeMid, nElemY0, nElemX0 + nGaugeMid, nElemY1, pElem->colElemFrame);
+    }
   }
 
 
-  // Draw a frame around the gauge
-  gslc_DrawFrameRect(pGui,pElem->rElem,pElem->colElemFrame);
 
   return true;
 }
@@ -538,7 +539,7 @@ bool gslc_ElemXGaugeDrawRadial(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gslc_te
 
 
   if (nRng == 0) {
-    GSLC_DEBUG_PRINT("ERROR: ElemXRadialDraw() Zero range [%d,%d]\n",nMin,nMax);
+    GSLC_DEBUG2_PRINT("ERROR: ElemXRadialDraw() Zero range [%d,%d]\n",nMin,nMax);
     return false;
   }
 
@@ -595,7 +596,7 @@ bool gslc_ElemXGaugeDrawRamp(gslc_tsGui* pGui,gslc_tsElemRef* pElemRef,gslc_teRe
   int16_t   nInd;
 
   if (nRng == 0) {
-    GSLC_DEBUG_PRINT("ERROR: gslc_ElemXGaugeDrawRamp() Zero range [%d,%d]\n",nMin,nMax);
+    GSLC_DEBUG2_PRINT("ERROR: gslc_ElemXGaugeDrawRamp() Zero range [%d,%d]\n",nMin,nMax);
     return false;
   }
 

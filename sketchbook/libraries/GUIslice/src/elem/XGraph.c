@@ -58,17 +58,7 @@ extern const char GSLC_PMEM ERRSTR_PXD_NULL[];
 //
 // - This file extends the core GUIslice functionality with
 //   additional widget types
-// - After adding any widgets to GUIslice_ex, a unique
-//   enumeration (GSLC_TYPEX_*) should be added to "GUIslice.h"
 //
-//   TODO: Consider whether we should remove the need to update
-//         these enumerations in "GUIslice.h"; we could instead
-//         define a single "GSLC_TYPEX" in GUIslice.h but then
-//         allow "GUIslice_ex.h" to create a new set of unique
-//         enumerations. This way extended elements could be created
-//         in GUIslice_ex and no changes at all would be required
-//         in GUIslice.
-
 // ----------------------------------------------------------------------------
 
 // ============================================================================
@@ -79,7 +69,7 @@ gslc_tsElemRef* gslc_ElemXGraphCreate(gslc_tsGui* pGui,int16_t nElemId,int16_t n
 {
   if ((pGui == NULL) || (pXData == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGraphCreate";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return NULL;
   }
   gslc_tsElem     sElem;
@@ -250,7 +240,7 @@ bool gslc_ElemXGraphDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
 {
   if ((pvGui == NULL) || (pvElemRef == NULL)) {
     static const char GSLC_PMEM FUNCSTR[] = "ElemXGraphDraw";
-    GSLC_DEBUG_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
+    GSLC_DEBUG2_PRINT_CONST(ERRSTR_NULL,FUNCSTR);
     return false;
   }
   // Typecast the parameters to match the GUI and element types
@@ -262,7 +252,7 @@ bool gslc_ElemXGraphDraw(void* pvGui,void* pvElemRef,gslc_teRedrawType eRedraw)
   gslc_tsXGraph* pBox;
   pBox = (gslc_tsXGraph*)(pElem->pXData);
   if (pBox == NULL) {
-    GSLC_DEBUG_PRINT("ERROR: ElemXGraphDraw(%s) pXData is NULL\n","");
+    GSLC_DEBUG2_PRINT("ERROR: ElemXGraphDraw(%s) pXData is NULL\n","");
     return false;
   }
 

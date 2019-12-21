@@ -25,7 +25,7 @@
 
 // Include any extended elements
 #include "elem/XCheckbox.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 
 #include <math.h>
 
@@ -38,7 +38,7 @@ enum {E_PG_MAIN};
 enum {E_ELEM_BTN_QUIT,E_ELEM_TXT_COUNT,E_ELEM_PROGRESS,
       E_ELEM_DATAX,E_ELEM_DATAY,E_ELEM_DATAZ,E_ELEM_SCAN,
       E_ELEM_CHECK1};
-enum {E_FONT_BTN,E_FONT_TXT};
+enum {E_FONT_BTN,E_FONT_TXT,MAX_FONT}; // Use separate enum for fonts, MAX_FONT at end
 
 bool      m_bQuit = false;
 
@@ -51,7 +51,6 @@ float     m_fCoordZ = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE                1
-#define MAX_FONT                2
 
 // Define the maximum number of elements per page
 #define MAX_ELEM_PG_MAIN          21                // # Elems total
@@ -64,7 +63,7 @@ gslc_tsPage                 m_asPage[MAX_PAGE];
 gslc_tsElem                 m_asPageElem[MAX_ELEM_PG_MAIN_RAM];   // Storage for all elements in RAM
 gslc_tsElemRef              m_asPageElemRef[MAX_ELEM_PG_MAIN];    // References for all elements in GUI
 
-gslc_tsXGauge               m_sXGauge;
+gslc_tsXProgress            m_sXGauge;
 gslc_tsXCheckbox            m_asXCheck[1];
 
 
@@ -213,7 +212,7 @@ bool InitOverlays()
   // Create progress bar
   pElemRef = gslc_ElemCreateTxt(&m_gui,GSLC_ID_AUTO,E_PG_MAIN,(gslc_tsRect){20,80,50,10},
     (char*)"Progress:",0,E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXGauge,(gslc_tsRect){80,80,50,10},
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXGauge,(gslc_tsRect){80,80,50,10},
     0,100,0,GSLC_COL_GREEN,false);
   m_pElemProgress = pElemRef; // Save for quick access
 
@@ -302,9 +301,9 @@ void setup()
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { return; }
 
   // Load Fonts
-  bOk = gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_PTR,NULL,1);
+  bOk = gslc_FontSet(&m_gui,E_FONT_BTN,GSLC_FONTREF_PTR,NULL,1);
   if (!bOk) { return; }
-  bOk = gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_PTR,NULL,1);
+  bOk = gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_PTR,NULL,1);
   if (!bOk) { return; }
 
 
@@ -339,7 +338,7 @@ void loop()
   gslc_ElemSetTxtStr(&m_gui,m_pElemDataZ,acTxt);
   gslc_ElemSetTxtCol(&m_gui,m_pElemDataZ,(m_fCoordY>50)?GSLC_COL_GREEN_LT2:GSLC_COL_RED_DK2);
 
-  gslc_ElemXGaugeUpdate(&m_gui,m_pElemProgress,50+50*sin(m_nCount/5.0));
+  gslc_ElemXProgressSetVal(&m_gui,m_pElemProgress,50+50*sin(m_nCount/5.0));
 
   // -----------------------------------------------
 

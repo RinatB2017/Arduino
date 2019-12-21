@@ -2,7 +2,7 @@
 #define _GUISLICE_CONFIG_ARD_H_
 
 // =============================================================================
-// GUIslice library (example user configuration #???) for:
+// GUIslice library (example user configuration) for:
 //   - CPU:     Arduino UNO / MEGA / etc
 //   - Display: MCUFRIEND
 //   - Touch:   Simple Analog (Resistive)
@@ -79,7 +79,7 @@ extern "C" {
 
 
   // SD Card
-  #define ADAGFX_PIN_SDCS     4     // SD card chip select (if GSLC_SD_EN=1)
+  #define ADAGFX_PIN_SDCS     10    // SD card chip select (if GSLC_SD_EN=1)
 
 
 
@@ -144,8 +144,7 @@ extern "C" {
   #define ADATOUCH_X_MAX    900
   #define ADATOUCH_Y_MIN    942
   #define ADATOUCH_Y_MAX    139
-  // Certain touch controllers may swap X & Y coords
-  #define ADATOUCH_REMAP_YX 0
+  #define ADATOUCH_REMAP_YX 0    // Some touch controllers may swap X & Y coords
 
   // Touch overlay resistance value
   // - In most cases, this value can be left as-is
@@ -169,6 +168,19 @@ extern "C" {
   //#define ADATOUCH_X_MAX    104
   //#define ADATOUCH_Y_MIN    99
   //#define ADATOUCH_Y_MAX    892
+
+  // MCUFRIEND_ID == 0x1581:
+  // - mcufriend 3.5" red
+  // - DRV_TOUCH_ADA_SIMPLE [320x480]: (MCUFRIEND ID=0x1581) (XP=6,XM=56,YP=55,YM=7) [TESTED]
+  //#define ADATOUCH_PIN_YP   A1
+  //#define ADATOUCH_PIN_XM   A2
+  //#define ADATOUCH_PIN_YM   7
+  //#define ADATOUCH_PIN_XP   6
+  //#define ADATOUCH_X_MIN    902
+  //#define ADATOUCH_X_MAX    160
+  //#define ADATOUCH_Y_MIN    956
+  //#define ADATOUCH_Y_MAX    157
+  //#define ADATOUCH_REMAP_YX 0
 
   // MCUFRIEND_ID == 0x2053:
   //#define ADATOUCH_PIN_YP   A2
@@ -258,6 +270,10 @@ extern "C" {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   // Define pressure threshold for detecting a touch
+  // - Specifying this range helps eliminate some erroneous touch events
+  //   resulting from noise in the touch overlay detection
+  // - For config details, please see:
+  //   https://github.com/ImpulseAdventure/GUIslice/wiki/Configuring-Touch-Pressure
   #define ADATOUCH_PRESS_MIN  10
   #define ADATOUCH_PRESS_MAX  4000
 
@@ -266,12 +282,15 @@ extern "C" {
   // -----------------------------------------------------------------------------
 
   // Error reporting
-  // - Set DEBUG_ERR to 1 to enable error reporting via the Serial connection
+  // - Set DEBUG_ERR to >0 to enable error reporting via the Serial connection
   // - Enabling DEBUG_ERR increases FLASH memory consumption which may be
   //   limited on the baseline Arduino (ATmega328P) devices.
+  //   - DEBUG_ERR 0 = Disable all error messaging
+  //   - DEBUG_ERR 1 = Enable critical error messaging (eg. init)
+  //   - DEBUG_ERR 2 = Enable verbose error messaging (eg. bad parameters, etc.)
   // - For baseline Arduino UNO, recommended to disable this after one has
   //   confirmed basic operation of the library is successful.
-  #define DEBUG_ERR               1   // 1 to enable, 0 to disable
+  #define DEBUG_ERR               1   // 1,2 to enable, 0 to disable
 
   // Debug initialization message
   // - By default, GUIslice outputs a message in DEBUG_ERR mode
@@ -289,8 +308,6 @@ extern "C" {
   //   set the following features to 0 (to disable) unless they are
   //   required.
   #define GSLC_FEATURE_COMPOUND       0   // Compound elements (eg. XSelNum)
-  #define GSLC_FEATURE_XGAUGE_RADIAL  0   // XGauge control with radial support
-  #define GSLC_FEATURE_XGAUGE_RAMP    0   // XGauge control with ramp support
   #define GSLC_FEATURE_XTEXTBOX_EMBED 0   // XTextbox control with embedded color
   #define GSLC_FEATURE_INPUT          0   // Keyboard / GPIO input control
 
@@ -331,7 +348,7 @@ extern "C" {
 
   // Enable for bitmap transparency and definition of color to use
   #define GSLC_BMP_TRANS_EN     1               // 1 = enabled, 0 = disabled
-  #define GSLC_BMP_TRANS_RGB    0xFF,0x00,0xFF  // RGB color (default:pink)
+  #define GSLC_BMP_TRANS_RGB    0xFF,0x00,0xFF  // RGB color (default: MAGENTA)
 
   #define GSLC_USE_FLOAT        0   // 1=Use floating pt library, 0=Fixed-point lookup tables
 

@@ -31,8 +31,10 @@
 // ------------------------------------------------------------
 #if   defined(DRV_TOUCH_ADA_STMPE610)
 #elif defined(DRV_TOUCH_ADA_SIMPLE)
+#elif defined(DRV_TOUCH_ADA_RA8875)
 #elif defined(DRV_TOUCH_XPT2046_STM)
 #elif defined(DRV_TOUCH_XPT2046_PS)
+#elif defined(DRV_TOUCH_TFT_ESPI)
 #else
   #error "Calibration only supported for resistive touch displays"
 #endif // DRV_TOUCH_*
@@ -370,7 +372,6 @@ bool CalcSegments()
   //      been detected in the 4 points. If not, error.
   // - 5) Identify the mapping type based on the segment assignments.
 
-  bool bOk = true;
   int16_t nXMin = 9999;
   int16_t nXMax = 0;
   int16_t nYMin = 9999;
@@ -743,7 +744,13 @@ void ReportCalibResult()
       GSLC_DEBUG_PRINT("%s ", m_acTxt);
     #endif
     // Report the pin wiring to the 4-wire resistive interface
-    GSLC_DEBUG_PRINT("(XP=%u,XM=A%d,YP=A%d,YM=%u) ", ADATOUCH_PIN_XP, (ADATOUCH_PIN_XM - A0), (ADATOUCH_PIN_YP - A0), ADATOUCH_PIN_YM);
+    #if !defined(A0)
+      // Support MCUs that don't use analog pin "A0" notation (eg. STM32)
+      GSLC_DEBUG_PRINT("(XP=%d,XM=%d,YP=%d,YM=%d) ", ADATOUCH_PIN_XP, ADATOUCH_PIN_XM, ADATOUCH_PIN_YP, ADATOUCH_PIN_YM);
+    #else
+      GSLC_DEBUG_PRINT("(XP=%u,XM=A%d,YP=A%d,YM=%u) ", ADATOUCH_PIN_XP, (ADATOUCH_PIN_XM - A0), (ADATOUCH_PIN_YP - A0), ADATOUCH_PIN_YM);
+    #endif
+
     GSLC_DEBUG_PRINT("\n", "");
   #elif defined(DRV_TOUCH_ADA_STMPE610)
     GSLC_DEBUG_PRINT("  // DRV_TOUCH_ADA_STMPE610 %s:\n", acDim);
@@ -799,7 +806,7 @@ void DrawCalibResult()
 {
   snprintf(m_acTxt, MAX_STR, "ADATOUCH_X_MIN: %u", m_nTouchCalXMin);
   gslc_DrvDrawTxt(&m_gui, m_rReport.x, m_rReport.y + 00, m_pFont, m_acTxt, GSLC_TXT_DEFAULT, GSLC_COL_YELLOW, GSLC_COL_BLACK);
-  snprintf(m_acTxt, MAX_STR, "ADATOUCH_U_MIN: %u", m_nTouchCalYMin);
+  snprintf(m_acTxt, MAX_STR, "ADATOUCH_Y_MIN: %u", m_nTouchCalYMin);
   gslc_DrvDrawTxt(&m_gui, m_rReport.x, m_rReport.y + 20, m_pFont, m_acTxt, GSLC_TXT_DEFAULT, GSLC_COL_YELLOW, GSLC_COL_BLACK);
   snprintf(m_acTxt, MAX_STR, "ADATOUCH_X_MAX: %u", m_nTouchCalXMax);
   gslc_DrvDrawTxt(&m_gui, m_rReport.x, m_rReport.y + 40, m_pFont, m_acTxt, GSLC_TXT_DEFAULT, GSLC_COL_YELLOW, GSLC_COL_BLACK);
@@ -925,8 +932,8 @@ void CalcMaxCoords(int16_t nTouchX, int16_t nTouchY, uint16_t nTouchZ)
   m_nTouchXMax = (nTouchX > m_nTouchXMax) ? nTouchX : m_nTouchXMax;
   m_nTouchYMin = (nTouchY < m_nTouchYMin) ? nTouchY : m_nTouchYMin;
   m_nTouchYMax = (nTouchY > m_nTouchYMax) ? nTouchY : m_nTouchYMax;
-  m_nTouchZMin = (nTouchZ < m_nTouchZMin) ? nTouchZ : m_nTouchZMin;
-  m_nTouchZMax = (nTouchZ > m_nTouchZMax) ? nTouchZ : m_nTouchZMax;
+  m_nTouchZMin = ((int16_t)nTouchZ < m_nTouchZMin) ? (int16_t)nTouchZ : m_nTouchZMin;
+  m_nTouchZMax = ((int16_t)nTouchZ > m_nTouchZMax) ? (int16_t)nTouchZ : m_nTouchZMax;
 }
 
 // Take raw input down / up events and update with debounced versions
@@ -1097,6 +1104,7 @@ void DoFsm(bool bTouchDown, bool bTouchUp, int16_t nTouchX, int16_t nTouchY, uin
   case STATE_CAPT_ROT:
     // Calculate calibration
     bSegsOk = CalcSegments();
+	(void)bSegsOk; // Unused
     CalcCalib();
 
     GSLC_DEBUG_PRINT("\nCALIB: Rotate\n", "");

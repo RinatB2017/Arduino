@@ -12,7 +12,7 @@
 
 // Include any extended elements
 #include "elem/XCheckbox.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 
 #include <libgen.h>       // For path parsing
 
@@ -28,7 +28,7 @@ enum {E_PG_MAIN,E_PG_EXTRA};
 enum {E_ELEM_BTN_QUIT,E_ELEM_BTN_EXTRA,E_ELEM_BTN_BACK,
       E_ELEM_TXT_COUNT,E_ELEM_PROGRESS,
       E_ELEM_CHECK1,E_ELEM_CHECK2,E_ELEM_CHECK3};
-enum {E_FONT_BTN,E_FONT_TXT,E_FONT_TITLE};
+enum {E_FONT_BTN,E_FONT_TXT,E_FONT_TITLE,MAX_FONT};
 
 bool      m_bQuit = false;
 
@@ -37,7 +37,6 @@ unsigned  m_nCount = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE            2
-#define MAX_FONT            5
 #define MAX_ELEM_PG_MAIN    10  // Max # elements on main page
 #define MAX_ELEM_PG_EXTRA   10  // Max # elements on second page
 
@@ -50,7 +49,7 @@ gslc_tsElemRef              m_asMainElemRef[MAX_ELEM_PG_MAIN];
 gslc_tsElem                 m_asExtraElem[MAX_ELEM_PG_EXTRA];
 gslc_tsElemRef              m_asExtraElemRef[MAX_ELEM_PG_EXTRA];
 
-gslc_tsXGauge               m_sXGauge;
+gslc_tsXProgress            m_sXProgress;
 gslc_tsXCheckbox            m_asXCheck[3];
 
 
@@ -152,7 +151,7 @@ bool InitOverlays(char *strPath)
   // Create progress bar
   pElemRef = gslc_ElemCreateTxt(&m_gui,GSLC_ID_AUTO,E_PG_MAIN,(gslc_tsRect){40,80,50,10},
     "Progress:",0,E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXGauge,(gslc_tsRect){100,80,50,10},
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXProgress,(gslc_tsRect){100,80,50,10},
     0,100,0,GSLC_COL_GREEN,false);
 
   // Checkbox element
@@ -210,12 +209,12 @@ int main( int argc, char* args[] )
   // - In this example, we are loading the same font but at
   //   different point sizes. We could also refer to other
   //   font files as well.
-  bOk = gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
-  bOk = gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
-  bOk = gslc_FontAdd(&m_gui,E_FONT_TITLE,GSLC_FONTREF_FNAME,FONT1,32);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_TITLE,GSLC_FONTREF_FNAME,FONT1,32);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
 
 
   // -----------------------------------
@@ -250,7 +249,7 @@ int main( int argc, char* args[] )
     snprintf(acTxt,MAX_STR,"%u",m_nCount);
     gslc_ElemSetTxtStr(&m_gui,pElemCnt,acTxt);
 
-    gslc_ElemXGaugeUpdate(&m_gui,pElemProgress,((m_nCount/200)%100));
+    gslc_ElemXProgressSetVal(&m_gui,pElemProgress,((m_nCount/200)%100));
 
 
     // Periodically call GUIslice update function

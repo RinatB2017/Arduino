@@ -23,7 +23,7 @@
 
 // Include any extended elements
 #include "elem/XCheckbox.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 
 // Defines for resources
 
@@ -36,7 +36,7 @@ enum {
   // E_PG_ALERT
   E_ELEM_ALERT_OK, E_ELEM_ALERT_CANCEL,
 };
-enum { E_FONT_BTN, E_FONT_TXT, E_FONT_TITLE };
+enum { E_FONT_BTN, E_FONT_TXT, E_FONT_TITLE, MAX_FONT }; // Use separate enum for fonts, MAX_FONT at end
 
 bool      m_bQuit = false;
 
@@ -45,7 +45,6 @@ unsigned  m_nCount = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE                4
-#define MAX_FONT                3
 
 // Define the maximum number of elements per page
 #define MAX_ELEM_PG_BASE      8                  // # Elems total on Global page
@@ -70,7 +69,7 @@ gslc_tsElemRef              m_asConfigElemRef[MAX_ELEM_PG_CONFIG];
 gslc_tsElem                 m_asAlertElem[MAX_ELEM_PG_ALERT_RAM];
 gslc_tsElemRef              m_asAlertElemRef[MAX_ELEM_PG_ALERT];
 
-gslc_tsXGauge               m_sXGauge;
+gslc_tsXProgress            m_sXGauge;
 gslc_tsXCheckbox            m_asXCheck[3];
 
 
@@ -198,7 +197,7 @@ bool InitOverlays()
   // Create progress bar
   pElemRef = gslc_ElemCreateTxt(&m_gui, GSLC_ID_AUTO, E_PG_MAIN, (gslc_tsRect) { 40, 120, 50, 10 },
     (char*)"Progress:", 0, E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui, E_ELEM_PROGRESS, E_PG_MAIN, &m_sXGauge, (gslc_tsRect) { 100, 120, 50, 10 },
+  pElemRef = gslc_ElemXProgressCreate(&m_gui, E_ELEM_PROGRESS, E_PG_MAIN, &m_sXGauge, (gslc_tsRect) { 100, 120, 50, 10 },
     0, 100, 0, GSLC_COL_GREEN, false);
   m_pElemProgress = pElemRef; // Save for quick access
 
@@ -276,9 +275,9 @@ void setup()
   if (!gslc_Init(&m_gui, &m_drv, m_asPage, MAX_PAGE, m_asFont, MAX_FONT)) { return; }
 
   // Load Fonts
-  if (!gslc_FontAdd(&m_gui, E_FONT_BTN, GSLC_FONTREF_PTR, NULL, 1)) { return; }
-  if (!gslc_FontAdd(&m_gui, E_FONT_TXT, GSLC_FONTREF_PTR, NULL, 1)) { return; }
-  if (!gslc_FontAdd(&m_gui, E_FONT_TITLE, GSLC_FONTREF_PTR, NULL, 1)) { return; }
+  if (!gslc_FontSet(&m_gui, E_FONT_BTN, GSLC_FONTREF_PTR, NULL, 1)) { return; }
+  if (!gslc_FontSet(&m_gui, E_FONT_TXT, GSLC_FONTREF_PTR, NULL, 1)) { return; }
+  if (!gslc_FontSet(&m_gui, E_FONT_TITLE, GSLC_FONTREF_PTR, NULL, 1)) { return; }
 
   // Create page elements
   InitOverlays();
@@ -300,10 +299,12 @@ void loop()
   // - Note: we can make the updates conditional on the active
   //   page by checking gslc_GetPageCur() first.
 
-  snprintf(acTxt, MAX_STR, "%u", m_nCount);
-  gslc_ElemSetTxtStr(&m_gui, m_pElemCnt, acTxt);
+  if ((m_nCount % 50) == 0) {
+    snprintf(acTxt, MAX_STR, "%u", m_nCount);
+    gslc_ElemSetTxtStr(&m_gui, m_pElemCnt, acTxt);
+  }
 
-  gslc_ElemXGaugeUpdate(&m_gui, m_pElemProgress, ((m_nCount / 2) % 100));
+  gslc_ElemXProgressSetVal(&m_gui, m_pElemProgress, ((m_nCount / 2) % 100));
 
   // We can change or disable the global page as needed:
   //   gslc_SetPageGlobal(&m_gui, E_PG_BASE);    // Set to E_PG_BASE

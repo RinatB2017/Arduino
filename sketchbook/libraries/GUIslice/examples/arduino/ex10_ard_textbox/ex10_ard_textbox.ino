@@ -30,7 +30,7 @@ enum {E_PG_MAIN};
 enum {E_ELEM_BOX,E_ELEM_BTN_QUIT,E_ELEM_COLOR,
       E_SLIDER,E_ELEM_TXT_COUNT,
       E_ELEM_TEXTBOX,E_SCROLLBAR};
-enum {E_FONT_TXT,E_FONT_TITLE};
+enum {E_FONT_TXT,E_FONT_TITLE,MAX_FONT}; // Use separate enum for fonts, MAX_FONT at end
 
 bool      m_bQuit = false;
 
@@ -39,7 +39,6 @@ unsigned  m_nCount = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE                1
-#define MAX_FONT                2
 
 // Define the maximum number of elements per page
 #define MAX_ELEM_PG_MAIN          7                  // # Elems total
@@ -209,8 +208,8 @@ void setup()
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { return; }
 
   // Load Fonts
-  if (!gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_PTR,NULL,1)) { return; }
-  if (!gslc_FontAdd(&m_gui,E_FONT_TITLE,GSLC_FONTREF_PTR,NULL,3)) { return; }
+  if (!gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_PTR,NULL,1)) { return; }
+  if (!gslc_FontSet(&m_gui,E_FONT_TITLE,GSLC_FONTREF_PTR,NULL,3)) { return; }
 
   // Create pages display
   InitOverlays();

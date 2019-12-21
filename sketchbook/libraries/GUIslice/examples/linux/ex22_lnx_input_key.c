@@ -15,7 +15,7 @@
 
 // Include any extended elements
 #include "elem/XCheckbox.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 #include "elem/XSlider.h"
 
 #include <time.h> // For clock() (frame rate reporting)
@@ -27,7 +27,7 @@
 enum {E_PG_MAIN};
 enum {E_ELEM_BOX,E_ELEM_BTN_QUIT,E_ELEM_TXT_COUNT,E_ELEM_PROGRESS,E_ELEM_PROGRESS1,
       E_ELEM_CHECK1,E_ELEM_RADIO1,E_ELEM_RADIO2,E_ELEM_SLIDER,E_ELEM_TXT_SLIDER};
-enum {E_FONT_BTN,E_FONT_TXT};
+enum {E_FONT_BTN,E_FONT_TXT,MAX_FONT};
 enum {E_GROUP1};
 
 bool        m_bQuit = false;
@@ -37,7 +37,6 @@ unsigned    m_nCount = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE            1
-#define MAX_FONT            5
 #define MAX_ELEM_PG_MAIN    21 // FIXME: Should be 15! //xxx
 
 gslc_tsGui                  m_gui;
@@ -47,7 +46,7 @@ gslc_tsPage                 m_asPage[MAX_PAGE];
 gslc_tsElem                 m_asPageElem[MAX_ELEM_PG_MAIN];
 gslc_tsElemRef              m_asPageElemRef[MAX_ELEM_PG_MAIN];
 
-gslc_tsXGauge               m_sXGauge,m_sXGauge1;
+gslc_tsXProgress               m_sXProgress,m_sXProgress1;
 gslc_tsXCheckbox            m_asXCheck[3];
 gslc_tsXSlider              m_sXSlider;
 
@@ -127,12 +126,12 @@ bool InitOverlays()
   // Create progress bar (horizontal)
   pElemRef = gslc_ElemCreateTxt(&m_gui,GSLC_ID_AUTO,E_PG_MAIN,(gslc_tsRect){20,80,50,10},
     "Progress:",0,E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXGauge,
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXProgress,
     (gslc_tsRect){80,80,50,10},0,100,0,GSLC_COL_GREEN,false);
 
   // Second progress bar (vertical)
   // - Demonstration of vertical bar with offset zero-pt showing both positive and negative range
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS1,E_PG_MAIN,&m_sXGauge1,
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS1,E_PG_MAIN,&m_sXProgress1,
     (gslc_tsRect){280,80,10,100},-25,75,-15,GSLC_COL_RED,true);
   gslc_ElemSetCol(&m_gui,pElemRef,GSLC_COL_BLUE_DK3,GSLC_COL_BLACK,GSLC_COL_BLACK);
 
@@ -179,8 +178,8 @@ int main( int argc, char* args[] )
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { exit(1); }
 
   // Load Fonts
-  gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
-  gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
+  gslc_FontSet(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
+  gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
 
   // Set up keyboard controls
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
@@ -226,7 +225,7 @@ int main( int argc, char* args[] )
     snprintf(acTxt,MAX_STR,"%u",m_nCount);
     gslc_ElemSetTxtStr(&m_gui,pElemCnt,acTxt);
 
-    gslc_ElemXGaugeUpdate(&m_gui,pElemProgress,((m_nCount/200)%100));
+    gslc_ElemXProgressSetVal(&m_gui,pElemProgress,((m_nCount/200)%100));
 
     // NOTE: A more efficient method is to move the following
     //       code into the slider position callback function.
@@ -235,7 +234,7 @@ int main( int argc, char* args[] )
     snprintf(acTxt,MAX_STR,"Slider: %u",nPos);
     gslc_ElemSetTxtStr(&m_gui,pElemSliderTxt,acTxt);
 
-    gslc_ElemXGaugeUpdate(&m_gui,pElemProgress1,(nPos*80.0/100.0)-15);
+    gslc_ElemXProgressSetVal(&m_gui,pElemProgress1,(nPos*80.0/100.0)-15);
 
     // Periodically call GUIslice update function
     gslc_Update(&m_gui);

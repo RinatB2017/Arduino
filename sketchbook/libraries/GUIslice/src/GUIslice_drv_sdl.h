@@ -74,27 +74,31 @@ extern "C" {
 #define DRV_HAS_DRAW_POINT          1 ///< Support gslc_DrvDrawPoint()
 
 #if defined(DRV_DISP_SDL1)
-  #define DRV_HAS_DRAW_POINTS         1 ///< Support gslc_DrvDrawPoints()
-  #define DRV_HAS_DRAW_LINE           0 ///< Support gslc_DrvDrawLine()
-  #define DRV_HAS_DRAW_RECT_FRAME     0 ///< Support gslc_DrvDrawFrameRect()
-  #define DRV_HAS_DRAW_RECT_FILL      1 ///< Support gslc_DrvDrawFillRect()
-  #define DRV_HAS_DRAW_CIRCLE_FRAME   0 ///< Support gslc_DrvDrawFrameCircle()
-  #define DRV_HAS_DRAW_CIRCLE_FILL    0 ///< Support gslc_DrvDrawFillCircle()
-  #define DRV_HAS_DRAW_TRI_FRAME      0 ///< Support gslc_DrvDrawFrameTriangle()
-  #define DRV_HAS_DRAW_TRI_FILL       0 ///< Support gslc_DrvDrawFillTriangle()
-  #define DRV_HAS_DRAW_TEXT           1 ///< Support gslc_DrvDrawTxt()
+  #define DRV_HAS_DRAW_POINTS            1 ///< Support gslc_DrvDrawPoints()
+  #define DRV_HAS_DRAW_LINE              0 ///< Support gslc_DrvDrawLine()
+  #define DRV_HAS_DRAW_RECT_FRAME        0 ///< Support gslc_DrvDrawFrameRect()
+  #define DRV_HAS_DRAW_RECT_FILL         1 ///< Support gslc_DrvDrawFillRect()
+  #define DRV_HAS_DRAW_RECT_ROUND_FRAME  0 ///< Support gslc_DrvDrawFrameRoundRect()
+  #define DRV_HAS_DRAW_RECT_ROUND_FILL   0 ///< Support gslc_DrvDrawFillRoundRect()
+  #define DRV_HAS_DRAW_CIRCLE_FRAME      0 ///< Support gslc_DrvDrawFrameCircle()
+  #define DRV_HAS_DRAW_CIRCLE_FILL       0 ///< Support gslc_DrvDrawFillCircle()
+  #define DRV_HAS_DRAW_TRI_FRAME         0 ///< Support gslc_DrvDrawFrameTriangle()
+  #define DRV_HAS_DRAW_TRI_FILL          0 ///< Support gslc_DrvDrawFillTriangle()
+  #define DRV_HAS_DRAW_TEXT              1 ///< Support gslc_DrvDrawTxt()
 #endif
 
 #if defined(DRV_DISP_SDL2)
-  #define DRV_HAS_DRAW_POINTS         1 ///< Support gslc_DrvDrawPoints()
-  #define DRV_HAS_DRAW_LINE           1 ///< Support gslc_DrvDrawLine()
-  #define DRV_HAS_DRAW_RECT_FRAME     1 ///< Support gslc_DrvDrawFrameRect()
-  #define DRV_HAS_DRAW_RECT_FILL      1 ///< Support gslc_DrvDrawFillRect()
-  #define DRV_HAS_DRAW_CIRCLE_FRAME   0 ///< Support gslc_DrvDrawFrameCircle()
-  #define DRV_HAS_DRAW_CIRCLE_FILL    0 ///< Support gslc_DrvDrawFillCircle()
-  #define DRV_HAS_DRAW_TRI_FRAME      0 ///< Support gslc_DrvDrawFrameTriangle()
-  #define DRV_HAS_DRAW_TRI_FILL       0 ///< Support gslc_DrvDrawFillTriangle()
-  #define DRV_HAS_DRAW_TEXT           1 ///< Support gslc_DrvDrawTxt()
+  #define DRV_HAS_DRAW_POINTS            1 ///< Support gslc_DrvDrawPoints()
+  #define DRV_HAS_DRAW_LINE              1 ///< Support gslc_DrvDrawLine()
+  #define DRV_HAS_DRAW_RECT_FRAME        1 ///< Support gslc_DrvDrawFrameRect()
+  #define DRV_HAS_DRAW_RECT_FILL         1 ///< Support gslc_DrvDrawFillRect()
+  #define DRV_HAS_DRAW_RECT_ROUND_FRAME  0 ///< Support gslc_DrvDrawFrameRoundRect()
+  #define DRV_HAS_DRAW_RECT_ROUND_FILL   0 ///< Support gslc_DrvDrawFillRoundRect()
+  #define DRV_HAS_DRAW_CIRCLE_FRAME      0 ///< Support gslc_DrvDrawFrameCircle()
+  #define DRV_HAS_DRAW_CIRCLE_FILL       0 ///< Support gslc_DrvDrawFillCircle()
+  #define DRV_HAS_DRAW_TRI_FRAME         0 ///< Support gslc_DrvDrawFrameTriangle()
+  #define DRV_HAS_DRAW_TRI_FILL          0 ///< Support gslc_DrvDrawFillTriangle()
+  #define DRV_HAS_DRAW_TEXT              1 ///< Support gslc_DrvDrawTxt()
 #endif
 
 #define DRV_OVERRIDE_TXT_ALIGN      0 ///< Driver provides text alignment
@@ -180,6 +184,35 @@ const char* gslc_DrvGetNameDisp(gslc_tsGui* pGui);
 /// \return String containing driver name
 ///
 const char* gslc_DrvGetNameTouch(gslc_tsGui* pGui);
+
+///
+/// Get the native display driver instance
+/// - This can be useful to access special commands
+///   available in the selected driver.
+///
+/// \param[in]  pGui:      Pointer to GUI
+///
+/// \return Void pointer to the display driver instance.
+///         This pointer should be typecast to the particular
+///         driver being used. If no driver was created then
+///         this function will return NULL.
+///
+void* gslc_DrvGetDriverDisp(gslc_tsGui* pGui);
+
+///
+/// Get the native touch driver instance
+/// - This can be useful to access special commands
+///   available in the selected driver.
+///
+/// \param[in]  pGui:      Pointer to GUI
+///
+/// \return Void pointer to the touch driver instance.
+///         This pointer should be typecast to the particular
+///         driver being used. If no driver was created then
+///         this function will return NULL.
+///
+void* gslc_DrvGetDriverTouch(gslc_tsGui* pGui);
+
 
 // -----------------------------------------------------------------------
 // Image/surface handling Functions

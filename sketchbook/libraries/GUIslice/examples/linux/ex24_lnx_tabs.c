@@ -13,14 +13,14 @@
 
 // Include any extended elements
 #include "elem/XCheckbox.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 
 #include <libgen.h>       // For path parsing
 
 
 // Defines for resources
 #define MAX_PATH  255
-#define FONT1 "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf"
+#define FONT1 "/usr/share/fonts/truetype/noto/NotoMono-Regular.ttf"
 
 // Enumerations for pages, elements, fonts, images
 enum { E_PG_BASE, E_PG_MAIN, E_PG_CONFIG, E_PG_ALERT  };
@@ -31,7 +31,7 @@ enum {
   // E_PG_ALERT
   E_ELEM_ALERT_OK, E_ELEM_ALERT_CANCEL,
 };
-enum { E_FONT_BTN, E_FONT_TXT, E_FONT_TITLE };
+enum { E_FONT_BTN, E_FONT_TXT, E_FONT_TITLE, MAX_FONT };
 
 bool      m_bQuit = false;
 
@@ -40,7 +40,6 @@ unsigned  m_nCount = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE            4
-#define MAX_FONT            3
 #define MAX_ELEM_PG_BASE    8   // # Elems total on Global page
 #define MAX_ELEM_PG_MAIN    3   // # Elems total on Main page
 #define MAX_ELEM_PG_CONFIG  6   // # Elems total on Extra page
@@ -59,7 +58,7 @@ gslc_tsElemRef              m_asConfigElemRef[MAX_ELEM_PG_CONFIG];
 gslc_tsElem                 m_asAlertElem[MAX_ELEM_PG_ALERT];
 gslc_tsElemRef              m_asAlertElemRef[MAX_ELEM_PG_ALERT];
 
-gslc_tsXGauge               m_sXGauge;
+gslc_tsXProgress            m_sXProgress;
 gslc_tsXCheckbox            m_asXCheck[3];
 
 
@@ -215,7 +214,7 @@ bool InitOverlays()
   // Create progress bar
   pElemRef = gslc_ElemCreateTxt(&m_gui, GSLC_ID_AUTO, E_PG_MAIN, (gslc_tsRect) { 40, 120, 50, 10 },
     (char*)"Progress:", 0, E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui, E_ELEM_PROGRESS, E_PG_MAIN, &m_sXGauge, (gslc_tsRect) { 100, 120, 50, 10 },
+  pElemRef = gslc_ElemXProgressCreate(&m_gui, E_ELEM_PROGRESS, E_PG_MAIN, &m_sXProgress, (gslc_tsRect) { 100, 120, 50, 10 },
     0, 100, 0, GSLC_COL_GREEN, false);
   m_pElemProgress = pElemRef; // Save for quick access
 
@@ -297,12 +296,12 @@ int main( int argc, char* args[] )
   // - In this example, we are loading the same font but at
   //   different point sizes. We could also refer to other
   //   font files as well.
-  bOk = gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
-  bOk = gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
-  bOk = gslc_FontAdd(&m_gui,E_FONT_TITLE,GSLC_FONTREF_FNAME,FONT1,12);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_TITLE,GSLC_FONTREF_FNAME,FONT1,12);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
 
 
   // -----------------------------------
@@ -334,7 +333,7 @@ int main( int argc, char* args[] )
     snprintf(acTxt,MAX_STR,"%u",m_nCount);
     gslc_ElemSetTxtStr(&m_gui,m_pElemCnt,acTxt);
 
-    gslc_ElemXGaugeUpdate(&m_gui,m_pElemProgress,((m_nCount/200)%100));
+    gslc_ElemXProgressSetVal(&m_gui,m_pElemProgress,((m_nCount/200)%100));
 
     // We can change or disable the global page as needed:
     //   gslc_SetPageBase(&m_gui, E_PG_BASE);    // Set to E_PG_BASE

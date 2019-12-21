@@ -52,7 +52,6 @@
 extern "C" {
 #endif // __cplusplus
 
-
   // Define driver naming
   const char* m_acDrvDisp = "M5STACK";
   const char* m_acDrvTouch = "M5STACK(NONE)";
@@ -88,17 +87,16 @@ bool gslc_DrvInit(gslc_tsGui* pGui)
     // image in the controller graphics RAM
     pGui->bRedrawPartialEn = true;
 
-    m_disp.init();
-	
-	// TODO: Replace the following with DrvRotate()
-    m_disp.setRotation( pGui->nRotation );
-    pGui->nDispW = m_disp.width();
-    pGui->nDispH = m_disp.height();
+    // Initialize the M5stack driver
+    // - Note that this will automatically initialize the SD driver
+    // - It also configures the serial interface for 115200 baud
+    m5.begin();
+  
+    // Now that we have initialized the display, we can assign
+    // the rotation parameters and clipping region
+    gslc_DrvRotate(pGui,GSLC_ROTATE);
 
-    // Defaults for clipping region
-    gslc_tsRect rClipRect = {0,0,pGui->nDispW,pGui->nDispH};
-    gslc_DrvSetClipRect(pGui,&rClipRect);
-
+    // Additional init specific to M5stack
     pinMode(TFT_LIGHT_PIN, OUTPUT);
     digitalWrite(TFT_LIGHT_PIN, HIGH);
 
@@ -106,6 +104,10 @@ bool gslc_DrvInit(gslc_tsGui* pGui)
   return true;
 }
 
+void* gslc_DrvGetDriverDisp(gslc_tsGui* pGui)
+{
+  return (void*)(&m_disp);
+}
 
 void gslc_DrvDestruct(gslc_tsGui* pGui)
 {
@@ -159,7 +161,7 @@ bool gslc_DrvSetBkgndImage(gslc_tsGui* pGui,gslc_tsImgRef sImgRef)
   pGui->sImgRefBkgnd = sImgRef;
   pGui->sImgRefBkgnd.pvImgRaw = gslc_DrvLoadImage(pGui,sImgRef);
   if (pGui->sImgRefBkgnd.pvImgRaw == NULL) {
-    GSLC_DEBUG_PRINT("ERROR: DrvSetBkgndImage(%s) failed\n","");
+    GSLC_DEBUG2_PRINT("ERROR: DrvSetBkgndImage(%s) failed\n","");
     return false;
   }
 
@@ -226,7 +228,7 @@ const void* gslc_DrvFontAdd(gslc_teFontRefType eFontRefType,const void* pvFontRe
 {
   // Arduino mode currently only supports font definitions from memory
   if (eFontRefType != GSLC_FONTREF_PTR) {
-    GSLC_DEBUG_PRINT("ERROR: DrvFontAdd(%s) failed - Arduino only supports memory-based fonts\n","");
+    GSLC_DEBUG2_PRINT("ERROR: DrvFontAdd(%s) failed - Arduino only supports memory-based fonts\n","");
     return NULL;
   }
   // Return pointer to Adafruit-GFX GFXfont structure
@@ -397,6 +399,16 @@ bool gslc_DrvDrawFillRect(gslc_tsGui* pGui,gslc_tsRect rRect,gslc_tsColor nCol)
   return true;
 }
 
+bool gslc_DrvDrawFillRoundRect(gslc_tsGui* pGui,gslc_tsRect rRect,int16_t nRadius,gslc_tsColor nCol)
+{
+  // TODO: Support GSLC_CLIP_EN
+  // - Would need to determine how to clip the rounded corners
+  uint16_t nColRaw = gslc_DrvAdaptColorToRaw(nCol);
+  m_disp.fillRoundRect(rRect.x,rRect.y,rRect.w,rRect.h,nRadius,nColRaw);
+  return true;
+}
+
+
 bool gslc_DrvDrawFrameRect(gslc_tsGui* pGui,gslc_tsRect rRect,gslc_tsColor nCol)
 {
   uint16_t nColRaw = gslc_DrvAdaptColorToRaw(nCol);
@@ -434,6 +446,16 @@ bool gslc_DrvDrawFrameRect(gslc_tsGui* pGui,gslc_tsRect rRect,gslc_tsColor nCol)
 #endif
   return true;
 }
+
+bool gslc_DrvDrawFrameRoundRect(gslc_tsGui* pGui,gslc_tsRect rRect,int16_t nRadius,gslc_tsColor nCol)
+{
+  uint16_t nColRaw = gslc_DrvAdaptColorToRaw(nCol);
+  // TODO: Support GSLC_CLIP_EN
+  // - Would need to determine how to clip the rounded corners
+  m_disp.drawRoundRect(rRect.x,rRect.y,rRect.w,rRect.h,nRadius,nColRaw);
+  return true;
+}
+
 
 
 bool gslc_DrvDrawLine(gslc_tsGui* pGui,int16_t nX0,int16_t nY0,int16_t nX1,int16_t nY1,gslc_tsColor nCol)
@@ -586,14 +608,14 @@ void gslc_DrvDrawBmp24FromMem(gslc_tsGui* pGui,int16_t nDstX, int16_t nDstY,cons
 // These read 16- and 32-bit types from the SD card file.
 // BMP data is stored little-endian, Arduino is little-endian too.
 // May need to reverse subscript order if porting elsewhere.
-uint16_t gslc_DrvRead16SD(File f) {
+uint16_t gslc_DrvRead16SD(File &f) {
   uint16_t result;
   ((uint8_t *)&result)[0] = f.read(); // LSB
   ((uint8_t *)&result)[1] = f.read(); // MSB
   return result;
 }
 
-uint32_t gslc_DrvRead32SD(File f) {
+uint32_t gslc_DrvRead32SD(File &f) {
   uint32_t result;
   ((uint8_t *)&result)[0] = f.read(); // LSB
   ((uint8_t *)&result)[1] = f.read();
@@ -626,7 +648,7 @@ void gslc_DrvDrawBmp24FromSD(gslc_tsGui* pGui,const char *filename, uint16_t x, 
 
   // Open requested file on SD card
   if ((bmpFile = SD.open(filename)) == 0) {
-    GSLC_DEBUG_PRINT("ERROR: DrvDrawBmp24FromSD() file not found [%s]",filename);
+    GSLC_DEBUG2_PRINT("ERROR: DrvDrawBmp24FromSD() file not found [%s]",filename);
     return;
   }
   // Parse BMP header
@@ -700,9 +722,9 @@ void gslc_DrvDrawBmp24FromSD(gslc_tsGui* pGui,const char *filename, uint16_t x, 
             r = sdbuffer[buffidx++];
             //xxx tft.pushColor(tft.Color565(r,g,b));
             gslc_tsColor nCol = (gslc_tsColor){r,g,b};
-            gslc_tsColor nColTrans = (gslc_tsColor){GSLC_BMP_TRANS_RGB};
             bool bDrawBit = true;
             if (GSLC_BMP_TRANS_EN) {
+              gslc_tsColor nColTrans = pGui->sTransCol;
               if ((nCol.r == nColTrans.r) && (nCol.g == nColTrans.g) && (nCol.b == nColTrans.b)) {
                 bDrawBit = false;
               }
@@ -721,7 +743,7 @@ void gslc_DrvDrawBmp24FromSD(gslc_tsGui* pGui,const char *filename, uint16_t x, 
   }
   bmpFile.close();
   if(!goodBmp) {
-    GSLC_DEBUG_PRINT("ERROR: DrvDrawBmp24FromSD() BMP format unknown [%s]",filename);
+    GSLC_DEBUG2_PRINT("ERROR: DrvDrawBmp24FromSD() BMP format unknown [%s]",filename);
   }
 }
 // ----- REFERENCE CODE end
@@ -770,7 +792,7 @@ bool gslc_DrvDrawImage(gslc_tsGui* pGui,int16_t nDstX,int16_t nDstY,gslc_tsImgRe
       return true;
     } else if ((sImgRef.eImgFlags & GSLC_IMGREF_FMT) == GSLC_IMGREF_FMT_BMP24) {
       // 24-bit Bitmap in flash
-	  // FIXME: Should we be passing "true" as last param?
+      // FIXME: Should we be passing "true" as last param?
       gslc_DrvDrawBmp24FromMem(pGui,nDstX,nDstY,sImgRef.pImgBuf,false);
       return true;
     } else {
@@ -795,7 +817,7 @@ bool gslc_DrvDrawImage(gslc_tsGui* pGui,int16_t nDstX,int16_t nDstY,gslc_tsImgRe
 
   } else {
     // Unsupported source
-    GSLC_DEBUG_PRINT("DBG: DrvDrawImage() unsupported source eImgFlags=%d\n", sImgRef.eImgFlags);
+    GSLC_DEBUG2_PRINT("DBG: DrvDrawImage() unsupported source eImgFlags=%d\n", sImgRef.eImgFlags);
     return false;
   }
 }
@@ -841,7 +863,7 @@ void gslc_DrvDrawBkgnd(gslc_tsGui* pGui)
 
 bool gslc_DrvInitTouch(gslc_tsGui* pGui,const char* acDev) {
   if (pGui == NULL) {
-    GSLC_DEBUG_PRINT("ERROR: DrvInitTouch(%s) called with NULL ptr\n","");
+    GSLC_DEBUG2_PRINT("ERROR: DrvInitTouch(%s) called with NULL ptr\n","");
     return false;
   }
 
@@ -851,12 +873,22 @@ bool gslc_DrvInitTouch(gslc_tsGui* pGui,const char* acDev) {
   return true;
 }
 
+void* gslc_DrvGetDriverTouch(gslc_tsGui* pGui)
+{
+  // As the touch driver instance is optional, we need to check for
+  // its existence before returning a pointer to it.
+  #if defined(DRV_TOUCH_INSTANCE)
+    return (void*)(&m_touch);
+  #else
+    return NULL;
+  #endif
+}
 
 bool gslc_DrvGetTouch(gslc_tsGui* pGui,int16_t* pnX,int16_t* pnY,uint16_t* pnPress,gslc_teInputRawEvent* peInputEvent,int16_t* pnInputVal)
 {
 
   if ((pGui == NULL) || (pGui->pvDriver == NULL)) {
-    GSLC_DEBUG_PRINT("ERROR: DrvGetTouch(%s) called with NULL ptr\n","");
+    GSLC_DEBUG2_PRINT("ERROR: DrvGetTouch(%s) called with NULL ptr\n","");
     return false;
   }
 

@@ -25,17 +25,37 @@
 // Include any extended elements
 #include "elem/XCheckbox.h"
 #include "elem/XSlider.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 
-#include <Adafruit_GFX.h>
+// ------------------------------------------------
+// Load specific fonts
+// ------------------------------------------------
 
 // To demonstrate additional fonts, uncomment the following line:
 //#define USE_EXTRA_FONTS
 
+// Different display drivers provide different fonts, so a few examples
+// have been provided and selected here. Font files are usually
+// located within the display library folder or fonts subfolder.
 #ifdef USE_EXTRA_FONTS
-  // Note that these files are located within the Adafruit-GFX library folder:
-  #include "Fonts/FreeSansBold12pt7b.h"
+  #if defined(DRV_DISP_TFT_ESPI) // TFT_eSPI
+    #include <TFT_eSPI.h>
+    #define FONT_NAME1 &FreeSansBold12pt7b
+  #elif defined(DRV_DISP_ADAGFX_ILI9341_T3) // Teensy
+    #include <font_Arial.h>
+    #define FONT_NAME1 &Arial_12
+    #define SET_FONT_MODE1 // Enable Teensy extra fonts
+  #else // Arduino, etc.
+    #include <Adafruit_GFX.h>
+    #include <gfxfont.h>
+    #include "Fonts/FreeSansBold12pt7b.h"
+    #define FONT_NAME1 &FreeSansBold12pt7b
+  #endif
+#else
+  // Use the default font
+  #define FONT_NAME1 NULL
 #endif
+// ------------------------------------------------
 
 // Defines for resources
 
@@ -44,7 +64,7 @@
 enum {E_PG_MAIN};
 enum {E_ELEM_BOX,E_ELEM_BTN_QUIT,E_ELEM_TXT_COUNT,E_ELEM_PROGRESS,E_ELEM_PROGRESS1,
       E_ELEM_CHECK1,E_ELEM_RADIO1,E_ELEM_RADIO2,E_ELEM_SLIDER,E_ELEM_TXT_SLIDER};
-enum {E_FONT_BTN,E_FONT_TXT};
+enum {E_FONT_BTN,E_FONT_TXT,MAX_FONT}; // Use separate enum for fonts, MAX_FONT at end
 enum {E_GROUP1};
 
 bool        m_bQuit = false;
@@ -55,7 +75,6 @@ unsigned    m_nCount = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE                1
-#define MAX_FONT                2
 
 // Define the maximum number of elements per page
 #define MAX_ELEM_PG_MAIN          16                                        // # Elems total
@@ -68,7 +87,7 @@ gslc_tsPage                 m_asPage[MAX_PAGE];
 gslc_tsElem                 m_asPageElem[MAX_ELEM_PG_MAIN_RAM];
 gslc_tsElemRef              m_asPageElemRef[MAX_ELEM_PG_MAIN];
 
-gslc_tsXGauge               m_sXGauge,m_sXGauge1;
+gslc_tsXProgress            m_sXProgress,m_sXProgress1;
 gslc_tsXCheckbox            m_asXCheck[3];
 gslc_tsXSlider              m_sXSlider;
 
@@ -89,10 +108,14 @@ static int16_t DebugOut(char ch) { Serial.write(ch); return 0; }
 // - Detect a button press
 // - In this particular example, we are looking for the Quit button press
 //   which is used to terminate the program.
-bool CbBtnQuit(void* pvGui,void *pvElem,gslc_teTouch eTouch,int16_t nX,int16_t nY)
+bool CbBtnQuit(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY)
 {
+  //gslc_tsGui*     pGui      = (gslc_tsGui*)(pvGui);
+  //gslc_tsElemRef* pElemRef  = (gslc_tsElemRef*)(pvElemRef);
+
   if (eTouch == GSLC_TOUCH_UP_IN) {
     m_bQuit = true;
+    GSLC_DEBUG_PRINT("Callback: Quit button pressed\n", "");
   }
   return true;
 }
@@ -130,6 +153,7 @@ bool CbCheckbox(void* pvGui, void* pvElemRef, int16_t nSelId, bool bChecked)
     default:
       break;
   } // switch
+  return true;
 }
 
 
@@ -148,9 +172,11 @@ bool InitOverlays()
   pElemRef = gslc_ElemCreateBox(&m_gui,E_ELEM_BOX,E_PG_MAIN,(gslc_tsRect){10,50,300,150});
   gslc_ElemSetCol(&m_gui,pElemRef,GSLC_COL_WHITE,GSLC_COL_BLACK,GSLC_COL_BLACK);
 
-  // Create Quit button with text label
+  // Create Quit button with modifiable text label
+  static char mstr_quit[8] = "Quit";
   pElemRef = gslc_ElemCreateBtnTxt(&m_gui,E_ELEM_BTN_QUIT,E_PG_MAIN,
-    (gslc_tsRect){160,80,80,40},(char*)"Quit",0,E_FONT_BTN,&CbBtnQuit);
+    (gslc_tsRect){160,80,80,40},mstr_quit,sizeof(mstr_quit),E_FONT_BTN,&CbBtnQuit);
+  gslc_ElemSetRoundEn(&m_gui,pElemRef,true);
 
   // Create counter
   pElemRef = gslc_ElemCreateTxt(&m_gui,GSLC_ID_AUTO,E_PG_MAIN,(gslc_tsRect){20,60,50,10},
@@ -164,13 +190,13 @@ bool InitOverlays()
   // Create progress bar (horizontal)
   pElemRef = gslc_ElemCreateTxt(&m_gui,GSLC_ID_AUTO,E_PG_MAIN,(gslc_tsRect){20,80,50,10},
     (char*)"Progress:",0,E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXGauge,
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXProgress,
     (gslc_tsRect){80,80,50,10},0,100,0,GSLC_COL_GREEN,false);
   m_pElemProgress = pElemRef; // Save for quick access
 
   // Second progress bar (vertical)
   // - Demonstration of vertical bar with offset zero-pt showing both positive and negative range
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS1,E_PG_MAIN,&m_sXGauge1,
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS1,E_PG_MAIN,&m_sXProgress1,
     (gslc_tsRect){280,80,10,100},-25,75,-15,GSLC_COL_RED,true);
   gslc_ElemSetCol(&m_gui,pElemRef,GSLC_COL_BLUE_DK3,GSLC_COL_BLACK,GSLC_COL_BLACK);
   m_pElemProgress1 = pElemRef; // Save for quick access
@@ -231,14 +257,13 @@ void setup()
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { return; }
 
   // Load Fonts
-  #ifdef USE_EXTRA_FONTS
-    // Demonstrate the use of additional fonts (must have #include)
-    if (!gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_PTR,&FreeSansBold12pt7b,1)) { return; }
-  #else
-    // Use default font
-    if (!gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_PTR,NULL,1)) { return; }
+  if (!gslc_FontSet(&m_gui,E_FONT_BTN,GSLC_FONTREF_PTR,FONT_NAME1,1)) { return; }
+  if (!gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_PTR,NULL,1)) { return; }
+  // Some display drivers need to set a mode to use the extra fonts
+  #if defined(SET_FONT_MODE1)
+    gslc_FontSetMode(&m_gui, E_FONT_BTN, GSLC_FONTREF_MODE_1);
   #endif
-  if (!gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_PTR,NULL,1)) { return; }
+
 
   // Create graphic elements
   InitOverlays();
@@ -261,7 +286,7 @@ void loop()
   snprintf(acTxt,MAX_STR,"%u",m_nCount/5);
   gslc_ElemSetTxtStr(&m_gui,m_pElemCnt,acTxt);
 
-  gslc_ElemXGaugeUpdate(&m_gui,m_pElemProgress,((m_nCount/1)%100));
+  gslc_ElemXProgressSetVal(&m_gui,m_pElemProgress,((m_nCount/1)%100));
 
   // NOTE: A more efficient method is to move the following
   //       code into the slider position callback function.
@@ -270,7 +295,7 @@ void loop()
   snprintf(acTxt,MAX_STR,"%u",nPos);
   gslc_ElemSetTxtStr(&m_gui,m_pElemSliderTxt,acTxt);
 
-  gslc_ElemXGaugeUpdate(&m_gui,m_pElemProgress1,(nPos*80.0/100.0)-15);
+  gslc_ElemXProgressSetVal(&m_gui,m_pElemProgress1,(nPos*80.0/100.0)-15);
 
 
   // Periodically call GUIslice update function
@@ -279,11 +304,25 @@ void loop()
   // Slow down updates
   delay(10);
 
-  // In a real program, we would detect the button press and take an action.
-  // For this Arduino demo, we will pretend to exit by emulating it with an
-  // infinite loop. Note that interrupts are not disabled so that any debug
-  // messages via Serial have an opportunity to be transmitted.
+  // In an Arduino sketch, one doesn't normally "Quit" the program.
+  // For demonstration purposes, we are going to demonstrate
+  // changing the Quit button appearance and then stopping the program
+  // in an infinite loop.
   if (m_bQuit) {
+    // Fetch a reference to the Quit button
+    // - This demonstrates how to get an element from its ID (enumeration)
+    // - In most cases, it is easier to save an element reference variable
+    //   when we call ElemCreate*() on any element that we want to modify later.
+    gslc_tsElemRef* pElemRef = gslc_PageFindElemById(&m_gui, E_PG_MAIN, E_ELEM_BTN_QUIT);
+
+    // Change the button text
+    gslc_ElemSetTxtStr(&m_gui, pElemRef, (char*)"STOP");
+    // Change the button color
+    gslc_ElemSetCol(&m_gui, pElemRef, GSLC_COL_RED_LT4, GSLC_COL_RED, GSLC_COL_RED_LT2);
+
+    // Let's stop the program here by calling a final update, Quit and
+    // then stall in an infinite loop.
+    gslc_Update(&m_gui);
     gslc_Quit(&m_gui);
     while (1) { }
   }

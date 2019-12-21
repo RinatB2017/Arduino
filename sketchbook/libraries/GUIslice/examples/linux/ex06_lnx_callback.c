@@ -12,7 +12,7 @@
 
 // Include any extended elements
 #include "elem/XCheckbox.h"
-#include "elem/XGauge.h"
+#include "elem/XProgress.h"
 
 #include <math.h>
 #include <libgen.h>       // For path parsing
@@ -29,7 +29,7 @@ enum {E_PG_MAIN};
 enum {E_ELEM_BTN_QUIT,E_ELEM_TXT_COUNT,E_ELEM_PROGRESS,
       E_ELEM_DATAX,E_ELEM_DATAY,E_ELEM_DATAZ,E_ELEM_SCAN,
       E_ELEM_CHECK1};
-enum {E_FONT_BTN,E_FONT_TXT};
+enum {E_FONT_BTN,E_FONT_TXT,MAX_FONT};
 
 bool      m_bQuit = false;
 
@@ -42,7 +42,6 @@ float     m_fCoordZ = 0;
 
 // Instantiate the GUI
 #define MAX_PAGE            1
-#define MAX_FONT            5
 #define MAX_ELEM_PG_MAIN    20
 
 gslc_tsGui                  m_gui;
@@ -52,7 +51,7 @@ gslc_tsPage                 m_asPage[MAX_PAGE];
 gslc_tsElem                 m_asPageElem[MAX_ELEM_PG_MAIN];
 gslc_tsElemRef              m_asPageElemRef[MAX_ELEM_PG_MAIN];
 
-gslc_tsXGauge               m_sXGauge;
+gslc_tsXProgress               m_sXProgress;
 gslc_tsXCheckbox            m_asXCheck[1];
 
 #define MAX_STR             100
@@ -212,7 +211,7 @@ bool InitOverlays(char *strPath)
   // Create progress bar
   pElemRef = gslc_ElemCreateTxt(&m_gui,GSLC_ID_AUTO,E_PG_MAIN,(gslc_tsRect){20,80,50,10},
     "Progress:",0,E_FONT_TXT);
-  pElemRef = gslc_ElemXGaugeCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXGauge,(gslc_tsRect){80,80,50,10},
+  pElemRef = gslc_ElemXProgressCreate(&m_gui,E_ELEM_PROGRESS,E_PG_MAIN,&m_sXProgress,(gslc_tsRect){80,80,50,10},
     0,100,0,GSLC_COL_GREEN,false);
 
 
@@ -289,10 +288,10 @@ int main( int argc, char* args[] )
   if (!gslc_Init(&m_gui,&m_drv,m_asPage,MAX_PAGE,m_asFont,MAX_FONT)) { exit(1); }
 
   // Load Fonts
-  bOk = gslc_FontAdd(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
-  bOk = gslc_FontAdd(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
-  if (!bOk) { fprintf(stderr,"ERROR: FontAdd failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_BTN,GSLC_FONTREF_FNAME,FONT1,12);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
+  bOk = gslc_FontSet(&m_gui,E_FONT_TXT,GSLC_FONTREF_FNAME,FONT1,10);
+  if (!bOk) { fprintf(stderr,"ERROR: FontSet failed\n"); exit(1); }
 
 
   // -----------------------------------
@@ -332,7 +331,7 @@ int main( int argc, char* args[] )
     gslc_ElemSetTxtStr(&m_gui,pElemDataZ,acTxt);
     gslc_ElemSetTxtCol(&m_gui,pElemDataZ,(m_fCoordY>50)?GSLC_COL_GREEN_LT2:GSLC_COL_RED_DK2);
 
-    gslc_ElemXGaugeUpdate(&m_gui,pElemProgress,50+50*sin(m_nCount/500.0));
+    gslc_ElemXProgressSetVal(&m_gui,pElemProgress,50+50*sin(m_nCount/500.0));
 
     // -----------------------------------------------
 

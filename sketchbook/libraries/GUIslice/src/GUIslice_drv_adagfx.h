@@ -63,12 +63,19 @@ extern "C" {
   #define DRV_TOUCH_TYPE_EXTERNAL
   #define DRV_TOUCH_TYPE_RES         // Resistive
   #define DRV_TOUCH_TYPE_ANALOG      // Analog
+#elif defined(DRV_TOUCH_ADA_RA8875)
+  #define DRV_TOUCH_TYPE_EXTERNAL
+  #define DRV_TOUCH_TYPE_RES         // Resistive
 #elif defined(DRV_TOUCH_XPT2046_STM)
   #define DRV_TOUCH_TYPE_EXTERNAL
   #define DRV_TOUCH_TYPE_RES         // Resistive
 #elif defined(DRV_TOUCH_XPT2046_PS)
   #define DRV_TOUCH_TYPE_EXTERNAL
   #define DRV_TOUCH_TYPE_RES         // Resistive
+#elif defined(DRV_TOUCH_URTOUCH)
+  #define DRV_TOUCH_TYPE_EXTERNAL
+  // Don't set DRV_TOUCH_TYPE_RES since URTouch provides its own calibration
+  //#define DRV_TOUCH_TYPE_RES         // Resistive  
 #elif defined(DRV_TOUCH_INPUT)
   #define DRV_TOUCH_TYPE_EXTERNAL
 #elif defined(DRV_TOUCH_HANDLER)
@@ -86,19 +93,39 @@ extern "C" {
 //   gslc_DrvDrawPoint()
 // =======================================================================
 
-#define DRV_HAS_DRAW_POINT          1 ///< Support gslc_DrvDrawPoint()
+#define DRV_HAS_DRAW_POINT             1 ///< Support gslc_DrvDrawPoint()
 
-#define DRV_HAS_DRAW_POINTS         0 ///< Support gslc_DrvDrawPoints()
-#define DRV_HAS_DRAW_LINE           1 ///< Support gslc_DrvDrawLine()
-#define DRV_HAS_DRAW_RECT_FRAME     1 ///< Support gslc_DrvDrawFrameRect()
-#define DRV_HAS_DRAW_RECT_FILL      1 ///< Support gslc_DrvDrawFillRect()
-#define DRV_HAS_DRAW_CIRCLE_FRAME   1 ///< Support gslc_DrvDrawFrameCircle()
-#define DRV_HAS_DRAW_CIRCLE_FILL    1 ///< Support gslc_DrvDrawFillCircle()
-#define DRV_HAS_DRAW_TRI_FRAME      1 ///< Support gslc_DrvDrawFrameTriangle()
-#define DRV_HAS_DRAW_TRI_FILL       1 ///< Support gslc_DrvDrawFillTriangle()
-#define DRV_HAS_DRAW_TEXT           1 ///< Support gslc_DrvDrawTxt()
+#define DRV_HAS_DRAW_POINTS            0 ///< Support gslc_DrvDrawPoints()
+#define DRV_HAS_DRAW_LINE              1 ///< Support gslc_DrvDrawLine()
+#define DRV_HAS_DRAW_RECT_FRAME        1 ///< Support gslc_DrvDrawFrameRect()
+#define DRV_HAS_DRAW_RECT_FILL         1 ///< Support gslc_DrvDrawFillRect()
+#define DRV_HAS_DRAW_RECT_ROUND_FRAME  1 ///< Support gslc_DrvDrawFrameRoundRect()
+#define DRV_HAS_DRAW_RECT_ROUND_FILL   1 ///< Support gslc_DrvDrawFillRoundRect()
+#define DRV_HAS_DRAW_CIRCLE_FRAME      1 ///< Support gslc_DrvDrawFrameCircle()
+#define DRV_HAS_DRAW_CIRCLE_FILL       1 ///< Support gslc_DrvDrawFillCircle()
+#define DRV_HAS_DRAW_TRI_FRAME         1 ///< Support gslc_DrvDrawFrameTriangle()
+#define DRV_HAS_DRAW_TRI_FILL          1 ///< Support gslc_DrvDrawFillTriangle()
+#define DRV_HAS_DRAW_TEXT              1 ///< Support gslc_DrvDrawTxt()
 
-#define DRV_OVERRIDE_TXT_ALIGN      0 ///< Driver provides text alignment
+#define DRV_OVERRIDE_TXT_ALIGN         0 ///< Driver provides text alignment
+
+
+// -----------------------------------------------------------------------
+// Driver-specific overrides
+// - Some drivers have exceptions to the above support configuration
+// -----------------------------------------------------------------------
+#if defined(DRV_DISP_WAVESHARE_ILI9486)
+  #undef DRV_HAS_DRAW_RECT_ROUND_FRAME
+  #undef DRV_HAS_DRAW_RECT_ROUND_FILL
+  #undef DRV_HAS_DRAW_TRI_FRAME
+  #undef DRV_HAS_DRAW_TRI_FILL
+
+  #define DRV_HAS_DRAW_RECT_ROUND_FRAME  0 ///< Support gslc_DrvDrawFrameRoundRect()
+  #define DRV_HAS_DRAW_RECT_ROUND_FILL   0 ///< Support gslc_DrvDrawFillRoundRect()
+  #define DRV_HAS_DRAW_TRI_FRAME         0 ///< Support gslc_DrvDrawFrameTriangle()
+  #define DRV_HAS_DRAW_TRI_FILL          0 ///< Support gslc_DrvDrawFillTriangle()
+#endif
+
 
 // =======================================================================
 // Driver-specific members
@@ -184,6 +211,34 @@ const char* gslc_DrvGetNameDisp(gslc_tsGui* pGui);
 /// \return String containing driver name
 ///
 const char* gslc_DrvGetNameTouch(gslc_tsGui* pGui);
+
+///
+/// Get the native display driver instance
+/// - This can be useful to access special commands
+///   available in the selected driver.
+///
+/// \param[in]  pGui:      Pointer to GUI
+///
+/// \return Void pointer to the display driver instance.
+///         This pointer should be typecast to the particular
+///         driver being used. If no driver was created then
+///         this function will return NULL.
+///
+void* gslc_DrvGetDriverDisp(gslc_tsGui* pGui);
+
+///
+/// Get the native touch driver instance
+/// - This can be useful to access special commands
+///   available in the selected driver.
+///
+/// \param[in]  pGui:      Pointer to GUI
+///
+/// \return Void pointer to the touch driver instance.
+///         This pointer should be typecast to the particular
+///         driver being used. If no driver was created then
+///         this function will return NULL.
+///
+void* gslc_DrvGetDriverTouch(gslc_tsGui* pGui);
 
 // -----------------------------------------------------------------------
 // Image/surface handling Functions
@@ -394,6 +449,33 @@ bool gslc_DrvDrawFrameRect(gslc_tsGui* pGui,gslc_tsRect rRect,gslc_tsColor nCol)
 /// \return true if success, false if error
 ///
 bool gslc_DrvDrawFillRect(gslc_tsGui* pGui,gslc_tsRect rRect,gslc_tsColor nCol);
+
+
+///
+/// Draw a framed rounded rectangle
+///
+/// \param[in]  pGui:        Pointer to GUI
+/// \param[in]  rRect:       Rectangular region to frame
+/// \param[in]  nRadius:     Radius for rounded corners
+/// \param[in]  nCol:        Color RGB value to frame
+///
+/// \return true if success, false if error
+///
+bool gslc_DrvDrawFrameRoundRect(gslc_tsGui* pGui,gslc_tsRect rRect,int16_t nRadius,gslc_tsColor nCol);
+
+
+///
+/// Draw a filled rounded rectangle
+///
+/// \param[in]  pGui:        Pointer to GUI
+/// \param[in]  rRect:       Rectangular region to fill
+/// \param[in]  nRadius:     Radius for rounded corners
+/// \param[in]  nCol:        Color RGB value to fill
+///
+/// \return true if success, false if error
+///
+bool gslc_DrvDrawFillRoundRect(gslc_tsGui* pGui,gslc_tsRect rRect,int16_t nRadius,gslc_tsColor nCol);
+
 
 
 ///

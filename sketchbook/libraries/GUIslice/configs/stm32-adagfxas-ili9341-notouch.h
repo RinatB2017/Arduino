@@ -2,7 +2,7 @@
 #define _GUISLICE_CONFIG_ARD_H_
 
 // =============================================================================
-// GUIslice library (example user configuration #???) for:
+// GUIslice library (example user configuration) for:
 //   - CPU:     STM32
 //   - Display: ILI9341
 //   - Touch:   None
@@ -118,12 +118,15 @@ extern "C" {
   // -----------------------------------------------------------------------------
 
   // Error reporting
-  // - Set DEBUG_ERR to 1 to enable error reporting via the Serial connection
+  // - Set DEBUG_ERR to >0 to enable error reporting via the Serial connection
   // - Enabling DEBUG_ERR increases FLASH memory consumption which may be
   //   limited on the baseline Arduino (ATmega328P) devices.
+  //   - DEBUG_ERR 0 = Disable all error messaging
+  //   - DEBUG_ERR 1 = Enable critical error messaging (eg. init)
+  //   - DEBUG_ERR 2 = Enable verbose error messaging (eg. bad parameters, etc.)
   // - For baseline Arduino UNO, recommended to disable this after one has
   //   confirmed basic operation of the library is successful.
-  #define DEBUG_ERR               1   // 1 to enable, 0 to disable
+  #define DEBUG_ERR               1   // 1,2 to enable, 0 to disable
 
   // Debug initialization message
   // - By default, GUIslice outputs a message in DEBUG_ERR mode
@@ -141,8 +144,6 @@ extern "C" {
   //   set the following features to 0 (to disable) unless they are
   //   required.
   #define GSLC_FEATURE_COMPOUND       0   // Compound elements (eg. XSelNum)
-  #define GSLC_FEATURE_XGAUGE_RADIAL  0   // XGauge control with radial support
-  #define GSLC_FEATURE_XGAUGE_RAMP    0   // XGauge control with ramp support
   #define GSLC_FEATURE_XTEXTBOX_EMBED 0   // XTextbox control with embedded color
   #define GSLC_FEATURE_INPUT          0   // Keyboard / GPIO input control
 
@@ -162,22 +163,6 @@ extern "C" {
   // -----------------------------------------------------------------------------
   // Touch Handling
   // -----------------------------------------------------------------------------
-
-  // Define how touch orientation changes with display orientation
-  #define TOUCH_ROTATION_DATA 0x6350
-  #define TOUCH_ROTATION_SWAPXY(rotation) ((( TOUCH_ROTATION_DATA >> ((rotation&0x03)*4) ) >> 2 ) & 0x01 )
-  #define TOUCH_ROTATION_FLIPX(rotation)  ((( TOUCH_ROTATION_DATA >> ((rotation&0x03)*4) ) >> 1 ) & 0x01 )
-  #define TOUCH_ROTATION_FLIPY(rotation)  ((( TOUCH_ROTATION_DATA >> ((rotation&0x03)*4) ) >> 0 ) & 0x01 )
-
-  // - Set any of the following to 1 to perform touch display
-  //   remapping functions, 0 to disable. Use DBG_TOUCH to determine which
-  //   remapping modes should be enabled for your display
-  // - Please refer to "docs/GUIslice_config_guide.xlsx" for detailed examples
-  // - NOTE: Both settings, GLSC_TOUCH_ROTATE and SWAP / FLIP are applied, 
-  //         try to set _SWAP_XY and _FLIP_X/Y to 0 and only use GLSC_TOUCH_ROTATE
-  #define ADATOUCH_SWAP_XY  0
-  #define ADATOUCH_FLIP_X   0
-  #define ADATOUCH_FLIP_Y   0
 
   // Define the maximum number of touch events that are handled
   // per gslc_Update() call. Normally this can be set to 1 but certain
